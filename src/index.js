@@ -1,26 +1,85 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem } = require('electron');
 const path = require('node:path');
+
+const isMacOs = process.platform == "darwin";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
+let mainWindow;
+let settingsWindow;
+
+require('@electron/remote/main').initialize();
+
 const createWindow = () => {
   // Create the browser window.
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
+    fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: true,
+      contextIsolation: false,
     },
   });
 
-  // and load the index.html of the app.
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
 
-  // Open the DevTools.
-  mainWindow.webContents.openDevTools();
+  //mainWindow.webContents.openDevTools();
+  require('@electron/remote/main').enable(mainWindow.webContents);
+};
+
+
+const extraMenu = isMacOs
+  ? [
+      {
+        label: app.name,
+        submenu:[
+          {role: 'About'},
+          {type: 'separator'},
+          {label: 'Settings',
+            click: async () => {
+              openSettingsPanel()
+              settingsWindow.once('ready-to-show', () => {
+                settingsWindow.show();
+              });
+            }
+          },
+          {type: 'separator'},
+          {role: 'Help'},
+          {role: 'Close'},
+        ]
+      },
+  ]
+: [];
+
+Menu.setApplicationMenu(
+  Menu.buildFromTemplate(
+    [...extraMenu],
+  )
+);
+
+function openSettingsPanel(){
+  settingsWindow = new BrowserWindow({
+    width: 350,
+    height: 275,
+    modal: true,
+    parent: mainWindow,
+    show: false,
+    transparent: true,
+    webPreferences:{
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+
+  settingsWindow.loadFile('src/settings.html');
+
+  require('@electron/remote/main').enable(settingsWindow.webContents);
+
 };
 
 // This method will be called when Electron has finished
@@ -38,14 +97,8 @@ app.whenReady().then(() => {
   });
 });
 
-// Quit when all windows are closed, except on macOS. There, it's common
-// for applications and their menu bar to stay active until the user quits
-// explicitly with Cmd + Q.
+
 app.on('window-all-closed', () => {
-  if (process.platform !== 'darwin') {
-    app.quit();
-  }
+  app.quit();
 });
 
-// In this file you can include the rest of your app's specific main process
-// code. You can also put them in separate files and import them here.

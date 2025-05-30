@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Settings</title>
+    <style>
+        html, body {
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        background: rgb(200, 200, 200)
+        }
+
+        .container {
+        background: rgba(0,0,0,0);
+        padding: 2rem;
+        text-align: center;
+        }
+
+        h2 {
+        margin-bottom: 1.5rem;
+        }
+
+        .form-group {
+        margin-bottom: 1.2rem;
+        }
+
+        .tfc-wrapper {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        }
+
+        .tfc-wrapper span,
+        .tfc-wrapper input {
+        font-size: 1rem;
+        }
+
+        input[type="text"] {
+        width: 100px;
+        text-align: center;
+        padding: 0.25rem;
+        margin: 0 0.5rem;
+        }
+
+        label {
+        font-weight: 500;
+        }
+
+        button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        }
+
+        button:hover {
+        background-color: #0056b3;
+        }
+    </style>
+    <script>
+      const fs = require('fs');
+      const path = require('path');
+      const { app } = require('electron').remote || require('@electron/remote');
+
+      const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+
+      window.onload = () => {
+        loadSettings();
+      };
+
+      function saveSettings() {
+        const settings = {
+          DEBUG: document.getElementById('debugMode').checked,
+          TFC_INSTANCE: document.getElementById('tfcInstance').value,
+        };
+
+        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+        alert('Settings saved!');
+
+        window.close();
+      }
+
+      function loadSettings() {
+        if (fs.existsSync(settingsPath)) {
+          const settings = JSON.parse(fs.readFileSync(settingsPath));
+
+          document.getElementById('debugMode').checked = !!settings.DEBUG;
+          document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
+        } else {
+          console.warn('No settings file found.');
+        }
+      }
+    </script>
+</head>
+<body>
+  <div class="container">
+    <h2>Settings</h2>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="debugMode" />
+        Debug Mode
+      </label>
+    </div>
+
+    <div class="form-group">
+      <label for="tfcInstance">TFC Instance</label>
+      <div class="tfc-wrapper">
+        <span>https://control.</span>
+        <input type="text" id="tfcInstance" placeholder="truck" />
+        <span>.nepgroup.io</span>
+      </div>
+    </div>
+
+    <button onclick="saveSettings()">Save</button>
+  </div>
+</body>
+</html>

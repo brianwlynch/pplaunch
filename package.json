@@ -1,8 +1,8 @@
 {
   "name": "pplaunch",
-  "productName": "pplaunch",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "productName": "TFC Panel Loader",
+  "version": "3.0.1",
+  "description": "Loading screen for TFC Touchscreens",
   "main": "src/index.js",
   "scripts": {
     "start": "electron-forge start",
@@ -15,7 +15,9 @@
   "author": "brianlynch",
   "license": "MIT",
   "dependencies": {
-    "electron-squirrel-startup": "^1.0.1"
+    "@electron/remote": "^2.1.2",
+    "electron-squirrel-startup": "^1.0.1",
+    "electron-store": "^10.0.1"
   },
   "devDependencies": {
     "@electron-forge/cli": "^7.8.1",

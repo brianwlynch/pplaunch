@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<config>
-    <!-- Debug mode - Won't redirect you, it will stay on the launching screen-->
-    <DEBUG>false</DEBUG>
-    <!-- Set this to your facility's TFC Instance -->
-    <!-- https://control.{TFC_INSTANCE}.nepgroup.io/production/pool/panel -->
-    <TFC_INSTANCE>ss7</TFC_INSTANCE>
-    <FOOTER>PPLaunch v3.0 &amp;nbsp | &amp;nbsp June 2025</FOOTER>
-</config>

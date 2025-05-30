@@ -10,98 +10,93 @@
     <script src="js/starfield.js" defer></script>
     <script src="js/spaceinvaders.js" defer></script>
     <script src="js/gamelaunch.js" defer></script>
-    <link rel="icon" href="/assets/images/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="assets/images/favicon.ico" type="image/x-icon">
     <title>Launching | The Fat Controller</title>
 
     <script>
+        const fs = require('fs');
+        const path = require('path');
+        const { app } = require('electron').remote || require('@electron/remote');
+
+        const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+
         var TFC_INSTANCE = null;
         let DEBUG = null;
         let TARGET_URL = null;
+        var FirstRun = true;
 
-        function getXmlData() {
-            fetch('settings.xml')
-                .then(response => response.text())
-                .then(str => {
-                    const parser = new DOMParser();
-                    const xmlDoc = parser.parseFromString(str, "application/xml");
-                    
-                    // Get the TFC Instance
-                    const tfcInstanceEl = xmlDoc.getElementsByTagName("TFC_INSTANCE")[0];
-                    if (tfcInstanceEl) {
-                        TFC_INSTANCE = tfcInstanceEl.textContent;
-                        console.log("TFC Instance loaded:", TFC_INSTANCE);
-                    } else {
-                        console.error("TFC_INSTANCE tag not found in XML.");
-                    }
+        window.onload = () => {
+            loadSettings();
+            setInterval(checkServer, 5000);
+        };
 
-                    // Get Debug Mode Settings - Won't redirect you, it will stay on the launching screen
-                    const debugEl = xmlDoc.getElementsByTagName("DEBUG")[0].textContent.trim().toLowerCase();
-                    if (debugEl) {
-                        DEBUG = debugEl === "true";
-                        console.log("Debug mode:", DEBUG);
-                        if(DEBUG){
-                            document.getElementById("debug_icon").style.visibility = "visible";
-                        };
-                    } else {
-                        console.error("DEBUG tag not found in XML.");
-                    }
+        function loadSettings() {
+            if (fs.existsSync(settingsPath)) {
+                const settings = JSON.parse(fs.readFileSync(settingsPath));
 
-                    // Get Footer String
-                    const footerEl = xmlDoc.getElementsByTagName("FOOTER")[0];
-                    if (footerEl){
-                        footer = footerEl.textContent;
-                        document.getElementById("footer").innerHTML = footer;
-                        console.log("Footer:", footer)
-                    } else {
-                        console.error("Footer tag not found in")
-                    }
-                })
-                .catch(error => {
-                    console.error("Error fetching or parsing the XML:", error);
-                });
+                TFC_INSTANCE = settings.TFC_INSTANCE || '';
+                DEBUG = !!settings.DEBUG;
+                
+                if(DEBUG || FirstRun){
+                    console.log("TFC Instance loaded:", TFC_INSTANCE);
+                    console.log("Debug mode:", DEBUG);
+                }
+
+                const debugIcon = document.getElementById("debug_icon");
+                if(debugIcon) debugIcon.style.visibility = DEBUG ? "visible" : "hidden";
+
+                FirstRun = false;
+            } else {
+            console.warn('No settings file found.');
+            }
         }
-
-        getXmlData();
 
         async function checkServer() {
+            loadSettings();
             if (!TFC_INSTANCE || TFC_INSTANCE == "none") {
-                console.warn("TFC_INSTANCE not yet available, skipping this check.");
-                getXmlData();
-                return;
-            } else {
-                TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
-                console.info(TARGET_URL);
-            }
-
-
-            if (DEBUG){
-                console.warn("Debug mode activated! Won't redirect!");
-                getXmlData();
+                if(DEBUG){
+                    console.warn("TFC_INSTANCE not yet available, skipping this check.");
+                };
+                loadSettings();
                 return;
             }
-            if (TARGET_URL != null){
-                try {
-                    const response = await fetch(TARGET_URL, {
-                        method: "HEAD",
-                        mode: "no-cors"
-                    });
-                    if (inGameMode){
-                        document.getElementById("redirect").classList.toggle("shown");
-                        setTimeout( () => {
-                            window.location.href = TARGET_URL;
-                        }, 5000);
-                    } else {
-                        window.location.href = TARGET_URL;
-                    }
-                } catch (e) {
-                    // Server likely not up yet
-                }
-            } else {
-                console.warn("TARGET_URL not yet available, can't redirect.");
+            
+            TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
+
+            try {
+                const response = await fetch(TARGET_URL, { method: "GET"});
+                console.info("Checking server at:", TARGET_URL);
+                const text = await response.text();
+                
+                if (response.status === 404 || (response.status === 200 && text.includes("404"))){
+                        console.error("Failed to fetch! - 404 Not Found")
+                        return;
+                } else redirect();
+
+            } catch (e) {
+                console.warn("Server likely not up yet:", e.message);
             }
         }
 
-        setInterval(checkServer, 5000);
+        function redirect(){
+            if (DEBUG){
+                console.warn("Debug mode activated! Won't redirect!");
+                return;
+            }
+            
+            if (inGameMode){
+                document.getElementById("redirect").classList.add("shown");
+                return;
+            } else {
+                window.location.href = TARGET_URL;
+            }
+        }
+        function redirectGame(){
+            if (DEBUG){
+                console.warn("Debug mode activated! Won't redirect!");
+                return;
+            } else window.location.href = TARGET_URL;
+        }
     </script>
 </head>
 
@@ -113,9 +108,9 @@
     </div>
     <img id="rocket-img" class="rocket" src="assets/images/rocket.gif" onclick="launchGame()"></img>
 
-    <div id="redirect" class="redirect">
+    <div id="redirect" class="redirect" onclick="redirectGame()">
         <h1 class="title_2">TFC is ready</h1>
-        <h4 class="subtitle_2">Reloading page in 5 seconds!</h4>
+        <h4 class="subtitle_2">Click me to open TFC!</h4>
     </div>
 
     <div id="game-container">
@@ -132,7 +127,7 @@
             onclick="toggleMute()"
             id="muteIcon"
             class="mute"/>
-        <p id="footer"></p>
+        <p id="footer">PPLaunch v3.0.0 &nbsp; | &nbsp; June 2025</p>
     </div>
 </body>
 

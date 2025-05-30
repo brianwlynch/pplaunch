@@ -161,10 +161,10 @@ function toggleMute() {
         // Update the GainNode's gain value based on the mute state and change the icon.
         if (window.game.sounds.mute){
             window.game.sounds.gainNode.gain.value = 0.0;
-            document.getElementById('muteIcon').src = "/assets/images/volume-off.svg";
+            document.getElementById('muteIcon').src = "assets/images/volume-off.svg";
         } else {
             window.game.sounds.gainNode.gain.value = 1.0;
-            document.getElementById('muteIcon').src = "/assets/images/volume.svg";
+            document.getElementById('muteIcon').src = "assets/images/volume.svg";
         }
         
         console.log("Mute toggled. Current state:", window.game.sounds.mute);
@@ -370,16 +370,16 @@ PlayState.prototype.enter = function(game) {
     //  Create the ship.
     this.ship = new Ship(game.width / 2, game.gameBounds.bottom);
     // this.shipImage = new Image();
-    // this.shipImage.src = '/assets/images/tfcwhite.png';
+    // this.shipImage.src = 'assets/images/tfcwhite.png';
 
     this.shipImages = {
         threeLives: new Image(),        
         twoLives: new Image(),        
         oneLife: new Image(),        
     };
-    this.shipImages.threeLives.src = '/assets/images/tfcwhite.png';
-    this.shipImages.twoLives.src = '/assets/images/tfwhite.png';
-    this.shipImages.oneLife.src = '/assets/images/fwhite.png';
+    this.shipImages.threeLives.src = 'assets/images/tfcwhite.png';
+    this.shipImages.twoLives.src = 'assets/images/tfwhite.png';
+    this.shipImages.oneLife.src = 'assets/images/fwhite.png';
 
     this.shipImage = this.shipImages.threeLives;
 
@@ -421,7 +421,7 @@ PlayState.prototype.enter = function(game) {
     this.invaderNextVelocity = null;
     
     this.invaderImage = new Image();
-    this.invaderImage.src = '/assets/images/tophat20x20.png';
+    this.invaderImage.src = 'assets/images/tophat20x20.png';
 };
 
 PlayState.prototype.update = function(game, dt) {
