@@ -1,5 +1,8 @@
 const { app, BrowserWindow, Menu, MenuItem } = require('electron');
+const { assert } = require('node:console');
 const path = require('node:path');
+const { ipcMain } = require('electron');
+
 
 const isMacOs = process.platform == "darwin";
 
@@ -8,11 +11,17 @@ if (require('electron-squirrel-startup')) {
   app.quit();
 }
 
-let mainWindow;
-let settingsWindow;
-
 require('@electron/remote/main').initialize();
 
+// ######################
+// ### Page Settings  ###
+// ######################
+let mainWindow;
+let settingsWindow;
+let helpWindow;
+let tfcWindow;
+
+// Main Window
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -27,41 +36,12 @@ const createWindow = () => {
   });
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
-
-  //mainWindow.webContents.openDevTools();
+  
+  //mainWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(mainWindow.webContents);
 };
 
-
-const extraMenu = isMacOs
-  ? [
-      {
-        label: app.name,
-        submenu:[
-          {role: 'About'},
-          {type: 'separator'},
-          {label: 'Settings',
-            click: async () => {
-              openSettingsPanel()
-              settingsWindow.once('ready-to-show', () => {
-                settingsWindow.show();
-              });
-            }
-          },
-          {type: 'separator'},
-          {role: 'Help'},
-          {role: 'Close'},
-        ]
-      },
-  ]
-: [];
-
-Menu.setApplicationMenu(
-  Menu.buildFromTemplate(
-    [...extraMenu],
-  )
-);
-
+// Settings Page
 function openSettingsPanel(){
   settingsWindow = new BrowserWindow({
     width: 350,
@@ -82,9 +62,114 @@ function openSettingsPanel(){
 
 };
 
-// This method will be called when Electron has finished
-// initialization and is ready to create browser windows.
-// Some APIs can only be used after this event occurs.
+// Help Page
+function openHelpPanel(){
+  helpWindow = new BrowserWindow({
+    width: 720,
+    height: 600,
+    modal: true,
+    parent: mainWindow,
+    show: false,
+    transparent: true,
+    webPreferences:{
+      nodeIntegration: true,
+      contextIsolation: false
+    }
+  })
+
+  helpWindow.loadFile('src/help.html');
+
+};
+
+//TFC Page
+//The main window will close and this will open with TFC
+function openTFCWindow(target_url){
+  tfcWindow = new BrowserWindow({
+    width: 1920,
+    height: 1080,
+    fullscreen: true,
+  })
+
+  tfcWindow.loadURL(target_url);
+
+};
+
+// ######################
+// ### Menu Settings  ###
+// ######################
+
+const extraMenu = isMacOs
+  ? [
+      {
+        label: app.name,
+        submenu:[
+          {role: 'Quit'},
+        ]
+      },
+  ]
+: [];
+
+Menu.setApplicationMenu(
+  Menu.buildFromTemplate(
+    [...extraMenu,
+      {
+        label: 'File',
+        submenu:[
+          {role: 'Help',
+            click: async () => {
+              openHelpPanel()
+              helpWindow.once('ready-to-show', () => {
+                helpWindow.show();
+              });
+            }
+          },
+          {type: 'separator'},
+          {label: 'Settings',
+            click: async () => {
+              openSettingsPanel()
+              settingsWindow.once('ready-to-show', () => {
+                settingsWindow.show();
+              });
+            }
+          },
+          {type: 'separator'},
+          {role: 'Close'},
+        ]
+      },
+      {
+        label: "Edit",
+        submenu:[
+          {role: 'cut'},
+          {role: 'copy'},
+          {role: 'paste'},
+        ]
+      },
+      {
+        label: "Window",
+        submenu: [
+          {role: "Reload"},
+          {type: "separator"},
+          {role: 'zoomIn'},
+          {role: 'zoomOut'},
+          {role: 'resetZoom'},
+        ]
+      },
+      {
+        label: "Debug",
+        submenu:[
+          {role: 'toggleDevTools'},
+          {role: "forceReload"},
+          { label: 'Restart App',
+            click: () => {
+              app.relaunch(); app.exit(0);
+            }
+          },
+        ]
+      },
+    ],
+  )
+);
+
 app.whenReady().then(() => {
   createWindow();
 
@@ -94,6 +179,36 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) {
       createWindow();
     }
+  });
+  
+  ipcMain.on('open-settings-window',() => {
+    openSettingsPanel()
+    settingsWindow.once('ready-to-show', () => {
+      settingsWindow.show();
+    });
+  });
+  ipcMain.on('open-help-window',() => {
+    openHelpPanel()
+    helpWindow.once('ready-to-show', () => {
+      helpWindow.show();
+    });
+  });
+  ipcMain.on('open-tfc-window',(event, target_url) => {
+    openTFCWindow(target_url);
+    tfcWindow.once('ready-to-show', () =>{
+      tfcWindow.show();
+      if(mainWindow){
+        mainWindow.close();
+      }
+    });
+  });
+  
+
+  ipcMain.on('debug-active',() => {
+    mainWindow.webContents.openDevTools();
+  });
+  ipcMain.on('debug-inactive',() => {
+    mainWindow.webContents.closeDevTools();
   });
 });
 

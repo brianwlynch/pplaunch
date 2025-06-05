@@ -41,12 +41,12 @@ function doShennanigans() {
     easterEgg = Math.random()
 
     if (.03 <= easterEgg && easterEgg <= .04) {
-        rocket.src = "/assets/images/truck_1.png";
+        rocket.src = "assets/images/truck_1.png";
         rocket.style.height = "200px";
         rocket.style.mixBlendMode = "normal";
     }
     else if (easterEgg <= .02) {
-        rocket.src = "/assets/images/picklerick.gif";
+        rocket.src = "assets/images/picklerick.gif";
     }
 }
 

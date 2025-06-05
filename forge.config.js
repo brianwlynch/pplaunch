@@ -4,20 +4,40 @@ const { FuseV1Options, FuseVersion } = require('@electron/fuses');
 module.exports = {
   packagerConfig: {
     asar: true,
+    icon: "src/assets/images/icon"
   },
   rebuildConfig: {},
   makers: [
     {
       name: '@electron-forge/maker-squirrel',
-      config: {},
+      config: {
+        iconURL: 'src/assets/images/tfcwhite.png',
+        setupIcon: 'src/assets/images/icon.ico'
+      },
     },
     {
       name: '@electron-forge/maker-zip',
       platforms: ['darwin'],
+      config: {
+        icon: "src/assets/images/icon.icns"
+      }
+    },
+    {
+      name: '@electron-forge/maker-wix',
+      config: {
+        icon: "src/assets/images/icon.png",
+        language: 1033,
+        manufacturer: 'NEP Group',
+        version: '3.0.0',
+      }
     },
     {
       name: '@electron-forge/maker-deb',
-      config: {},
+      config: {
+        options: {
+          icon: 'src/assets/images/icon.png'
+        }
+      },
     },
     {
       name: '@electron-forge/maker-rpm',

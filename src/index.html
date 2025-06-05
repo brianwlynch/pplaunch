@@ -17,6 +17,7 @@
         const fs = require('fs');
         const path = require('path');
         const { app } = require('electron').remote || require('@electron/remote');
+        const { ipcRenderer } = require('electron');
 
         const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
@@ -24,8 +25,13 @@
         let DEBUG = null;
         let TARGET_URL = null;
         var FirstRun = true;
+        let debugIcon;
+        let alertIcon;
 
+        
         window.onload = () => {
+            debugIcon = document.getElementById("debug_icon");
+            alertIcon = document.getElementById("alert_icon");
             loadSettings();
             setInterval(checkServer, 5000);
         };
@@ -42,30 +48,36 @@
                     console.log("Debug mode:", DEBUG);
                 }
 
-                const debugIcon = document.getElementById("debug_icon");
-                if(debugIcon) debugIcon.style.visibility = DEBUG ? "visible" : "hidden";
+                if(DEBUG){
+                    ipcRenderer.send("debug-active");
+                }
 
+                if(debugIcon) debugIcon.style.visibility = DEBUG ? "visible" : "hidden";
+                
                 FirstRun = false;
             } else {
-            console.warn('No settings file found.');
+                console.warn('No settings file found.');
             }
         }
 
         async function checkServer() {
             loadSettings();
             if (!TFC_INSTANCE || TFC_INSTANCE == "none") {
-                if(DEBUG){
-                    console.warn("TFC_INSTANCE not yet available, skipping this check.");
-                };
+                console.warn("TFC_INSTANCE not set. Please check your settings!");
+                alertIcon.style.visibility = "visible";  
                 loadSettings();
                 return;
+            } else {
+                alertIcon.style.visibility = "hidden";   
             }
             
             TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
+            //TARGET_URL = "https://nepgroup.com"
+
 
             try {
+                console.info("Checking TFC at:", TARGET_URL);
                 const response = await fetch(TARGET_URL, { method: "GET"});
-                console.info("Checking server at:", TARGET_URL);
                 const text = await response.text();
                 
                 if (response.status === 404 || (response.status === 200 && text.includes("404"))){
@@ -80,7 +92,7 @@
 
         function redirect(){
             if (DEBUG){
-                console.warn("Debug mode activated! Won't redirect!");
+                console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
                 return;
             }
             
@@ -88,20 +100,47 @@
                 document.getElementById("redirect").classList.add("shown");
                 return;
             } else {
-                window.location.href = TARGET_URL;
+                // window.location.href = TARGET_URL;
+                ipcRenderer.send("open-tfc-window", TARGET_URL);
             }
         }
         function redirectGame(){
             if (DEBUG){
-                console.warn("Debug mode activated! Won't redirect!");
+                console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
                 return;
             } else window.location.href = TARGET_URL;
         }
+        
+        ipcRenderer.on('settings-updated', () => {
+            loadSettings();
+            console.log("Loading Settings");
+        });
     </script>
 </head>
 
 <body>
-    <img id="debug_icon" src="assets/images/bug.svg" class="debug_icon"/>
+    <img id="debug_icon" src="assets/images/debug.svg" class="debug_icon"/>
+    <table style="position: absolute; right: 0; top: 0;">
+        <td>
+            <img id="alert_icon" src="assets/images/alert.svg" class="alert_icon"/>
+        </td>
+        <td>
+            <img id="help_icon" src="assets/images/help.svg" class="help_icon"/>
+        </td>
+        <td>
+            <img id="settings_icon" src="assets/images/settings.svg" class="settings_icon"/>
+        </td>
+    </table>
+
+    <script>
+        document.getElementById('settings_icon').addEventListener('click', () => {
+            ipcRenderer.send("open-settings-window");
+        });
+        document.getElementById('help_icon').addEventListener('click', () => {
+            ipcRenderer.send("open-help-window");
+        });
+    </script>
+
     <div id="main-container" class="container">
         <div id="title" class="title">TFC Is Launching</div>
         <div id="message" class="subtitle">This page will automatically refresh when ready.</div>
