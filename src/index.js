@@ -44,12 +44,14 @@ const createWindow = () => {
 // Settings Page
 function openSettingsPanel(){
   settingsWindow = new BrowserWindow({
-    width: 350,
-    height: 275,
+    width: 500,
+    height: 375,
     modal: true,
     parent: mainWindow,
     show: false,
     transparent: true,
+    frame: false,
+    roundedCorners: true,
     webPreferences:{
       nodeIntegration: true,
       contextIsolation: false
@@ -71,6 +73,8 @@ function openHelpPanel(){
     parent: mainWindow,
     show: false,
     transparent: true,
+    frame: false,
+    roundedCorners: true,
     webPreferences:{
       nodeIntegration: true,
       contextIsolation: false

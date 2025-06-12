@@ -11,7 +11,7 @@ module.exports = {
     {
       name: '@electron-forge/maker-squirrel',
       config: {
-        iconURL: 'src/assets/images/tfcwhite.png',
+        iconURL: 'src/assets/images/icon.ico',
         setupIcon: 'src/assets/images/icon.ico'
       },
     },
@@ -20,15 +20,6 @@ module.exports = {
       platforms: ['darwin'],
       config: {
         icon: "src/assets/images/icon.icns"
-      }
-    },
-    {
-      name: '@electron-forge/maker-wix',
-      config: {
-        icon: "src/assets/images/icon.png",
-        language: 1033,
-        manufacturer: 'NEP Group',
-        version: '3.0.0',
       }
     },
     {
