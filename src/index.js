@@ -221,3 +221,10 @@ app.on('window-all-closed', () => {
   app.quit();
 });
 
+//Autostart on boot
+app.on('ready', () => {
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    path: app.getPath('exe'),
+  });
+});

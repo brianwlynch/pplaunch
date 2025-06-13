@@ -12,7 +12,11 @@ module.exports = {
       name: '@electron-forge/maker-squirrel',
       config: {
         iconURL: 'src/assets/images/icon.ico',
-        setupIcon: 'src/assets/images/icon.ico'
+        setupIcon: 'src/assets/images/icon.ico',
+        authors: 'NEP Group, Brian Lynch',
+        owners: 'NEP Group, Brian Lynch',
+        version: '3.0.0',
+        description: "Loading screen for TFC Touchscreens",
       },
     },
     {
