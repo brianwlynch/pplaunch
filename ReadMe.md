@@ -1,7 +1,7 @@
-# TFC Soft Panel Launcher
-*This is not an official TFC Product*
+# TFC Public Panel Launcher
 
-This is a program to automatically load the TFC panel on a touch screen.
+This is a small client-side "app" meant for use on TFC public panels such as touchscreens and tablets.
+It enables these devices to power up before the TFC servers without the need for a human to refresh the
+browser once the TFC servers are online.
 
-On first install you will be in debug mode! This means the panel will not refresh itself. 
-Go to `File > Settings` to set your truck's TFC link and to disable debug mode.
+**Latest version:** 3.0.0

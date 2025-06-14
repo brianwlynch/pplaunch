@@ -2,6 +2,8 @@ const { app, BrowserWindow, Menu, MenuItem } = require('electron');
 const { assert } = require('node:console');
 const path = require('node:path');
 const { ipcMain } = require('electron');
+const electronSquirrelStartup = require('electron-squirrel-startup');
+const { fstat } = require('node:fs');
 
 
 const isMacOs = process.platform == "darwin";
@@ -12,6 +14,40 @@ if (require('electron-squirrel-startup')) {
 }
 
 require('@electron/remote/main').initialize();
+
+// //Delete Registry key on uninstall
+if(require('electron-squirrel-startup')) {
+  const squirrelEvent = process.argv[1];
+
+  if(squirrelEvent === '--squirrel-uninstall'){
+
+    //Remove AppData Folder
+    const appDataPath = path.join(app.getPath('appData'), app.getName());
+    try{
+      fs.rmSync(appDataPath, { recursive: true, force: true });
+      console.log('AppData folder removed.');
+    } catch (err) {
+      console.error('Failed to delete AppData folder: , err');
+    }
+
+
+    //Remove Startup Keys
+    const runKey = new WinReg({
+      hive: WinReg.HKCU,
+      key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
+    });
+
+    runKey.remove(app.getName(), function(err) {
+      if (err) {
+        console.error('Failed to remove startup entry:', err);
+      } else console.log('Startup entry removed.');
+    });
+
+    app.quit();
+  }
+  
+  return;
+}
 
 // ######################
 // ### Page Settings  ###
