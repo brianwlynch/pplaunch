@@ -1,12 +1,12 @@
-const { app, BrowserWindow, Menu, MenuItem } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, session, webContents } = require('electron');
 const { assert } = require('node:console');
 const path = require('node:path');
 const { ipcMain } = require('electron');
 const electronSquirrelStartup = require('electron-squirrel-startup');
 const { fstat } = require('node:fs');
 
-
 const isMacOs = process.platform == "darwin";
+let target_url = "";
 
 // Handle creating/removing shortcuts on Windows when installing/uninstalling.
 if (require('electron-squirrel-startup')) {
@@ -15,7 +15,8 @@ if (require('electron-squirrel-startup')) {
 
 require('@electron/remote/main').initialize();
 
-// //Delete Registry key on uninstall
+//Delete Registry key on uninstall
+//TODO: This doesn't work :(
 if(require('electron-squirrel-startup')) {
   const squirrelEvent = process.argv[1];
 
@@ -128,11 +129,36 @@ function openTFCWindow(target_url){
     width: 1920,
     height: 1080,
     fullscreen: true,
+    webPreferences:{
+      nodeIntegration: false,
+      contextIsolation: true,
+    },
   })
 
   tfcWindow.loadURL(target_url);
 
+  // Electron doesn't save the zoom level for different URLs by default so this will help it remember.
+  //Get each URL zoom level
+  let zoomLevels = {}
+
+  tfcWindow.webContents.on('zoom-changed', () => {
+    console.log("Page Zoomed!")
+    tfcWindow.webContents.getZoomLevel().then((level) =>
+    {
+      const url = new URL(tfcWindow.webContents.getURL());
+      const domainKey = url.origin; //Base URL ... https://control.{instance}.nepgroup.io
+      zoomLevels[domainKey] = level;
+    });
+  });
+
+  tfcWindow.webContents.on('did-navigate-in-page', () => {
+    const url = new URL(tfcWindow.webContents.getURL());
+    const domainKey = url.origin;
+    const savedZoom = zoomLevels[domainKey] ?? 0;
+    tfcWindow.webContents.setZoomLevel(savedZoom);
+  });
 };
+
 
 // ######################
 // ### Menu Settings  ###
@@ -234,6 +260,7 @@ app.whenReady().then(() => {
     });
   });
   ipcMain.on('open-tfc-window',(event, target_url) => {
+    target_url = target_url;
     openTFCWindow(target_url);
     tfcWindow.once('ready-to-show', () =>{
       tfcWindow.show();

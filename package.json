@@ -1,7 +1,7 @@
 {
   "name": "pplaunch",
   "productName": "TFC Public Panel Launcher",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/index.js",
   "scripts": {
@@ -39,8 +39,7 @@
       "target": [
         "nsis"
       ],
-      "icon": "src/assets/images/icon.ico",
-      "sign": false
+      "icon": "src/assets/images/icon.ico"
     },
     "nsis": {
       "oneClick": false,
