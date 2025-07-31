@@ -1,9 +1,11 @@
-const { app, BrowserWindow, Menu, MenuItem, session, webContents } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, session, webContents, globalShortcut } = require('electron');
 const { assert } = require('node:console');
 const path = require('node:path');
 const { ipcMain } = require('electron');
 const electronSquirrelStartup = require('electron-squirrel-startup');
 const { fstat } = require('node:fs');
+const fs = require('fs');
+const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 const isMacOs = process.platform == "darwin";
 let target_url = "";
@@ -49,6 +51,39 @@ if(require('electron-squirrel-startup')) {
   
   return;
 }
+
+// #################################
+// ### Save and Recall Settings  ###
+// #################################
+
+function loadSettings() {
+  try {
+    console.log("JSON:", JSON.parse(fs.readFileSync(settingsPath, 'utf8')));
+    return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
+  } catch (e) {
+    return { AUTO_START: false, ZOOM_LEVLES: {} };
+  }
+}
+
+function saveSettings(settings) {
+  fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
+}
+
+let settings = loadSettings();
+console.log("SETTINGS:", settings);
+let zoomLevels = settings.ZOOM_LEVLES || {};
+console.log("zoomLevels:", zoomLevels);
+
+
+
+//Autostart on boot
+// app.on('ready', () => {
+//   app.setLoginItemSettings({
+//     openAtLogin: !!settings.AUTO_START,
+//     path: app.getPath('exe'),
+//   });
+// });
+
 
 // ######################
 // ### Page Settings  ###
@@ -138,18 +173,41 @@ function openTFCWindow(target_url){
   tfcWindow.loadURL(target_url);
 
   // Electron doesn't save the zoom level for different URLs by default so this will help it remember.
-  //Get each URL zoom level
-  let zoomLevels = {}
 
-  tfcWindow.webContents.on('zoom-changed', () => {
-    console.log("Page Zoomed!")
-    tfcWindow.webContents.getZoomLevel().then((level) =>
-    {
-      const url = new URL(tfcWindow.webContents.getURL());
-      const domainKey = url.origin; //Base URL ... https://control.{instance}.nepgroup.io
-      zoomLevels[domainKey] = level;
-    });
+  tfcWindow.once('ready-to-show', () => {
+    const wc = tfcWindow.webContents;
+    const updateZoom = (delta) => {
+      const url = new URL(wc.getURL());
+      const domainKey = url.origin;
+
+      const level = wc.getZoomLevel();
+      const newLevel = level + delta;
+      wc.setZoomLevel(newLevel);
+      zoomLevels[domainKey] = newLevel;
+      settings.ZOOM_LEVLES = zoomLevels;
+      saveSettings(settings);
+    };
+
+    globalShortcut.register('Control+Plus', () => updateZoom(0.5));
+    globalShortcut.register('Control+-', () => updateZoom(-0.5));
+
+
+    globalShortcut.register('Control+0', () => {
+      const url = new URL(wc.getURL());
+      const domainKey = url.origin;
+      wc.setZoomLevel(0);
+      zoomLevels[domainKey] = 0;
+    })
   });
+
+  // Stop listening for shortcuts
+  tfcWindow.on('closed', () => {
+    globalShortcut.unregisterAll();
+  });
+
+
+
+    
 
   tfcWindow.webContents.on('did-navigate-in-page', () => {
     const url = new URL(tfcWindow.webContents.getURL());
@@ -282,12 +340,4 @@ app.whenReady().then(() => {
 
 app.on('window-all-closed', () => {
   app.quit();
-});
-
-//Autostart on boot
-app.on('ready', () => {
-  app.setLoginItemSettings({
-    openAtLogin: true,
-    path: app.getPath('exe'),
-  });
 });

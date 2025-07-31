@@ -10,7 +10,8 @@
     "make": "electron-forge make",
     "publish": "electron-forge publish",
     "lint": "echo \"No linting configured\"",
-    "build": "electron-builder"
+    "build": "npm run update-footer && electron-builder",
+    "update-footer": "node update-footer.js"
   },
   "keywords": [],
   "author": "NEP Group, Brian Lynch",
