@@ -74,15 +74,13 @@ console.log("SETTINGS:", settings);
 let zoomLevels = settings.ZOOM_LEVLES || {};
 console.log("zoomLevels:", zoomLevels);
 
-
-
-//Autostart on boot
-// app.on('ready', () => {
-//   app.setLoginItemSettings({
-//     openAtLogin: !!settings.AUTO_START,
-//     path: app.getPath('exe'),
-//   });
-// });
+// Autostart on boot
+app.on('ready', () => {
+  app.setLoginItemSettings({
+    openAtLogin: !!settings.AUTO_START,
+    path: app.getPath('exe'),
+  });
+});
 
 
 // ######################
