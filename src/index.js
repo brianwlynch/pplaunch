@@ -186,8 +186,8 @@ function openTFCWindow(target_url){
       saveSettings(settings);
     };
 
-    globalShortcut.register('Control+Plus', () => updateZoom(0.5));
-    globalShortcut.register('Control+-', () => updateZoom(-0.5));
+    globalShortcut.register('Control+=', () => updateZoom(0.25));
+    globalShortcut.register('Control+-', () => updateZoom(-0.25));
 
 
     globalShortcut.register('Control+0', () => {
