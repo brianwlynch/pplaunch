@@ -1,7 +1,6 @@
-const { app, BrowserWindow, Menu, MenuItem, session, webContents, globalShortcut } = require('electron');
+const { app, BrowserWindow, Menu, MenuItem, session, webContents, globalShortcut, ipcMain } = require('electron');
 const { assert } = require('node:console');
 const path = require('node:path');
-const { ipcMain } = require('electron');
 const electronSquirrelStartup = require('electron-squirrel-startup');
 const { fstat } = require('node:fs');
 const fs = require('fs');
@@ -56,6 +55,7 @@ if(require('electron-squirrel-startup')) {
 // ### Save and Recall Settings  ###
 // #################################
 
+
 function loadSettings() {
   try {
     console.log("JSON:", JSON.parse(fs.readFileSync(settingsPath, 'utf8')));
@@ -70,17 +70,15 @@ function saveSettings(settings) {
 }
 
 let settings = loadSettings();
-console.log("SETTINGS:", settings);
 let zoomLevels = settings.ZOOM_LEVLES || {};
-console.log("zoomLevels:", zoomLevels);
 
 // Autostart on boot
-app.on('ready', () => {
-  app.setLoginItemSettings({
-    openAtLogin: !!settings.AUTO_START,
-    path: app.getPath('exe'),
-  });
-});
+// app.on('ready', () => {
+//   app.setLoginItemSettings({
+//     openAtLogin: true,
+//     path: app.getPath('exe'),
+//   });
+// });
 
 
 // ######################
@@ -91,7 +89,7 @@ let settingsWindow;
 let helpWindow;
 let tfcWindow;
 
-// Main Window
+// main Window
 const createWindow = () => {
   // Create the browser window.
   mainWindow = new BrowserWindow({
@@ -107,7 +105,7 @@ const createWindow = () => {
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   
-  //mainWindow.webContents.toggleDevTools();
+  // mainWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(mainWindow.webContents);
 };
 
@@ -128,8 +126,9 @@ function openSettingsPanel(){
     }
   })
 
-  settingsWindow.loadFile('src/settings.html');
+  settingsWindow.loadFile(path.join(__dirname, 'settings.html'));
 
+  // settingsWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(settingsWindow.webContents);
 
 };
@@ -151,7 +150,7 @@ function openHelpPanel(){
     }
   })
 
-  helpWindow.loadFile('src/help.html');
+  helpWindow.loadFile(path.join(__dirname, 'help.html'));
 
 };
 
@@ -293,6 +292,16 @@ Menu.setApplicationMenu(
 );
 
 app.whenReady().then(() => {
+  // Make sure the settings file exists
+  if (!fs.existsSync(settingsPath)) {
+    try {
+      fs.copyFileSync(path.join(__dirname, 'settings.json'), settingsPath);
+      console.log('Settings file created successfully.');
+    } catch (error) {
+      console.error('Error creating settings file:', error);
+    }
+  };
+  
   createWindow();
 
   // On OS X it's common to re-create a window in the app when the
@@ -309,12 +318,14 @@ app.whenReady().then(() => {
       settingsWindow.show();
     });
   });
+
   ipcMain.on('open-help-window',() => {
     openHelpPanel()
     helpWindow.once('ready-to-show', () => {
       helpWindow.show();
     });
   });
+
   ipcMain.on('open-tfc-window',(event, target_url) => {
     target_url = target_url;
     openTFCWindow(target_url);
@@ -326,7 +337,6 @@ app.whenReady().then(() => {
     });
   });
   
-
   ipcMain.on('debug-active',() => {
     mainWindow.webContents.openDevTools();
   });

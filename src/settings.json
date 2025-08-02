@@ -1,6 +1,4 @@
 {
-  "DEBUG": true,
-  "TFC_INSTANCE": "none",
-  "AUTO_START": true,
-  "ZOOM_LEVELS": {}
+  "DEBUG": false,
+  "TFC_INSTANCE": "none"
 }

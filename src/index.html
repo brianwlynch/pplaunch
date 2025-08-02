@@ -34,6 +34,19 @@
             alertIcon = document.getElementById("alert_icon");
             loadSettings();
             setInterval(checkServer, 5000);
+
+            document.getElementById('settings_icon').addEventListener('click', () => {
+                ipcRenderer.send("open-settings-window");
+                if (DEBUG) {
+                    console.log("Settings icon clicked, opening settings window.");
+                }
+            });
+            document.getElementById('help_icon').addEventListener('click', () => {
+                ipcRenderer.send("open-help-window");
+                if (DEBUG) {
+                    console.log("Help icon clicked, opening help window.");
+                }
+            });
         };
 
         function loadSettings() {
@@ -132,15 +145,6 @@
         </td>
     </table>
 
-    <script>
-        document.getElementById('settings_icon').addEventListener('click', () => {
-            ipcRenderer.send("open-settings-window");
-        });
-        document.getElementById('help_icon').addEventListener('click', () => {
-            ipcRenderer.send("open-help-window");
-        });
-    </script>
-
     <div id="main-container" class="container">
         <div id="title" class="title">TFC Is Launching</div>
         <div id="message" class="subtitle">This page will automatically refresh when ready.</div>
@@ -166,7 +170,7 @@
             onclick="toggleMute()"
             id="muteIcon"
             class="mute"/>
-        <p id="footer">PPLaunch v3.0.12 &nbsp; | &nbsp; July 31, 2025</p>
+        <p id="footer">PPLaunch v3.0.1 &nbsp; | &nbsp; August 2, 2025</p>
     </div>
 </body>
 

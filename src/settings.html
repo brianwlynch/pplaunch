@@ -79,7 +79,6 @@
         const settings = {
           DEBUG: document.getElementById('debugMode').checked,
           TFC_INSTANCE: document.getElementById('tfcInstance').value,
-          AUTO_START: document.getElementById('auto_start').value,
         };
 
         fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
@@ -96,7 +95,6 @@
 
           document.getElementById('debugMode').checked = !!settings.DEBUG;
           document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
-          document.getElementById('auto_start').checked = !!settings.AUTO_START;
         } else {
           console.warn('No settings file found.');
         }
@@ -108,10 +106,6 @@
     <h2>Settings</h2>
 
     <div class="form-group">
-      <label>
-        <input type="checkbox" id="auto_start" />
-        Auto Start on Boot Up
-      </label><br>
       <label>
         <input type="checkbox" id="debugMode" />
         Debug Mode
