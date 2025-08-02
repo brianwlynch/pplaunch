@@ -6,10 +6,10 @@ The panel will open, then every five seconds it will try to connect to the TFC s
 
 **DISCLAIMER** - This is not an official TFC Product. If something does not work **DO NOT** contact TFC Support, they will not be able to help you!
 
-### First launch
+## First launch
 Upon first launch, the TFC Instance will no be set. Open the settings page (with the gear) and set your instance.
 
-### Debug mode
+## Debug mode
 In the settings menu you can enable debug mode. Debug mode is checked to see if it is enabled every five seconds. Developer tools will open!
 The panel will continute to operate as normally. Use the `console` tab in dev tools to see some logs. If the panel does connect to TFC, it **will not** redirect you until you disable debug mode. 
 
@@ -21,7 +21,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 ### v3.0.0
 - Switched to electron build. 
 - Script running in backgroup is no longer needed
-- Added music to shenanagins
+- Added music to shenanigans
 - Added new loading screen messages
 
 ### v2.0.0
@@ -30,6 +30,6 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 ## Future Changes
 - [ ] Implement Github LFS - Releases Section on Github now implemented
 - [ ] Ubuntu support
-- [ ] Option to mute music and sfx independently in shenangins
+- [ ] Option to mute music and sfx independently in shenanigans
 - [ ] Option for other types of TFC instances that use different url patterns
-- [ ] High score list for shenangins
+- [ ] High score list for shenanigans
