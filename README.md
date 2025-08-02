@@ -17,6 +17,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 
 ### v3.0.1 - **Latest**
 - Fixed persistant zoom across pages
+- Checks to see if the settings.json exists
 
 ### v3.0.0
 - Switched to electron build. 
@@ -28,7 +29,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - Initial launcher built by Dennis
 
 ## Future Changes
-- [ ] Implement Github LFS - Releases Section on Github now implemented
+- [ ] Implement Github LFS
 - [ ] Ubuntu support
 - [ ] Option to mute music and sfx independently in shenanigans
 - [ ] Option for other types of TFC instances that use different url patterns

@@ -1,0 +1,18 @@
+directories:
+  output: dist
+  buildResources: build
+appId: TFC Public Panel Launcher
+win:
+  target:
+    - nsis
+  icon: src/assets/images/icon.ico
+nsis:
+  oneClick: false
+  allowElevation: true
+  installerIcon: src/assets/images/icon.ico
+  uninstallerIcon: src/assets/images/icon.ico
+  uninstallDisplayName: TFC Public Panel Launcher
+  license: license.md
+  allowToChangeInstallationDirectory: false
+files: []
+electronVersion: 36.3.2
