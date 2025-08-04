@@ -29,7 +29,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - Initial launcher built by Dennis
 
 ## Future Changes
-- [ ] Implement Github LFS
+- [x] *Implement Github LFS* - I didn't know you can upload larger files on the releases page. This is no longer needed
 - [ ] Ubuntu support
 - [ ] Option to mute music and sfx independently in shenanigans
 - [ ] Option for other types of TFC instances that use different url patterns
