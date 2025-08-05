@@ -14,5 +14,13 @@ nsis:
   uninstallDisplayName: TFC Public Panel Launcher
   license: license.md
   allowToChangeInstallationDirectory: false
+linux:
+  target:
+    - deb
+  icon: src/assets/images/icon.png
+  category: Utility
+  maintainer: NEP Group, Brian Lynch
+  description: Loading screen for TFC Touchscreens
+  synopsis: TFC Public Panel Launcher
 files: []
 electronVersion: 36.3.2

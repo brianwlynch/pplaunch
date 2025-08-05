@@ -1,7 +1,7 @@
 {
   "name": "pplaunch",
   "productName": "TFC Public Panel Launcher",
-  "version": "3.0.1",
+  "version": "3.1.5",
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/index.js",
   "scripts": {
@@ -50,6 +50,14 @@
       "uninstallDisplayName": "TFC Public Panel Launcher",
       "license": "license.md",
       "allowToChangeInstallationDirectory": false
+    },
+    "linux": {
+      "target": ["deb"],
+      "icon": "src/assets/images/icon.png",
+      "category": "Utility",
+      "maintainer": "NEP Group, Brian Lynch",
+      "description": "Loading screen for TFC Touchscreens",
+      "synopsis": "TFC Public Panel Launcher"
     }
   }
 }

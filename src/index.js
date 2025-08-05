@@ -72,14 +72,46 @@ function saveSettings(settings) {
 let settings = loadSettings();
 let zoomLevels = settings.ZOOM_LEVLES || {};
 
-// Autostart on boot
-// app.on('ready', () => {
-//   app.setLoginItemSettings({
-//     openAtLogin: true,
-//     path: app.getPath('exe'),
-//   });
-// });
+// Autostart on boot - Windows only
+app.on('ready', () => {
+  app.setLoginItemSettings({
+    openAtLogin: true,
+    path: app.getPath('exe'),
+  });
+});
 
+//Autostart on boot - Ubuntu only
+if (process.platform === 'linux') {
+
+  const autoStartDir = path.join(process.env.HOME, '.config', 'autostart');
+  const desktopFile = path.join(autoStartDir, 'pplaunch.desktop');
+  const iconPath = path.join(__dirname, 'assets', 'images', 'icon.png');
+
+  const contents ='[Desktop Entry]\n' +
+    'Type=Application\n' +
+    'Name=PPLaunch\n' +
+    'Exec=/usr/bin/pplaunch\n' +
+    'X-GNOME-Autostart-enabled=true\n' +
+    'Icon=' + iconPath + '\n' +
+    'Hidden=false\n' +
+    'NoDisplay=false\n' +
+    'Comment=Launch TFC Soft Panel\n';
+
+  // Ensure the autostart directory exists
+  if (!fs.existsSync(autoStartDir)) {
+    fs.mkdirSync(autoStartDir, { recursive: true });
+  }
+
+  // Create the .desktop file for autostart
+  if (!fs.existsSync(desktopFile)) {
+    try {
+      fs.writeFileSync(desktopFile, contents);
+      console.log('Autostart file created successfully.');
+    } catch (error) {
+      console.error('Error creating autostart file:', error);
+    }
+  };
+};
 
 // ######################
 // ### Page Settings  ###
@@ -201,10 +233,6 @@ function openTFCWindow(target_url){
   tfcWindow.on('closed', () => {
     globalShortcut.unregisterAll();
   });
-
-
-
-    
 
   tfcWindow.webContents.on('did-navigate-in-page', () => {
     const url = new URL(tfcWindow.webContents.getURL());

@@ -15,6 +15,9 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 
 ## Changelog
 
+### v3.1.1 - **Beta**
+- Adding support for Linux installs
+
 ### v3.0.1 - **Latest**
 - Fixed persistant zoom across pages
 - Checks to see if the settings.json exists
