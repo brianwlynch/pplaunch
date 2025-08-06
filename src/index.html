@@ -84,9 +84,11 @@
                 alertIcon.style.visibility = "hidden";   
             }
             
-            //TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
-            TARGET_URL = "https://nepgroup.com"
-
+            if (TFC_INSTANCE.toLowerCase() == "demo"){
+                TARGET_URL = "https://nepgroup.com"
+            } else {
+                TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
+            }          
 
             try {
                 console.info("Checking TFC at:", TARGET_URL);
@@ -167,10 +169,14 @@
     </div>
     <div class="footer">
         <img src="assets/images/volume-off.svg"
-            onclick="toggleMute()"
-            id="muteIcon"
-            class="mute"/>
-        <p id="footer">PPLaunch v3.1.5 &nbsp; | &nbsp; August 5, 2025</p>
+            onclick="toggleSFXMute()"
+            id="sfxIcon"
+            class="sound-controls"/>
+        <img src="assets/images/music-off.svg"
+            onclick="toggleMusicMute()"
+            id="musicIcon"
+            class="sound-controls"/>
+        <p id="footer">PPLaunch v3.1.0 &nbsp; | &nbsp; August 6, 2025</p>
     </div>
 </body>
 

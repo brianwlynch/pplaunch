@@ -10,11 +10,11 @@ function launchGame() {
     var canvas = document.getElementById("gameCanvas");
     canvas.width =  1200;
     canvas.height = 800;
-
+    
     //  Create the game.
     game = new Game();
     window.game = game;
-
+    
     //  Initialise it with the game canvas.
     game.initialise(canvas);
 
@@ -49,7 +49,10 @@ function launchGame() {
     }, false);
 
     setTimeout(() => {
-        document.getElementById('muteIcon').classList.toggle('shown');
+        document.getElementById('musicIcon').classList.toggle('shown');
+    }, 2500);
+    setTimeout(() => {
+        document.getElementById('sfxIcon').classList.toggle('shown');
     }, 2500);
 
     inGameMode = true;

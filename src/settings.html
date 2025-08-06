@@ -94,7 +94,11 @@
           const settings = JSON.parse(fs.readFileSync(settingsPath));
 
           document.getElementById('debugMode').checked = !!settings.DEBUG;
-          document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
+          if(settings.TFC_INSTANCE === "none") {
+            document.getElementById('tfcInstance').value = '';
+          } else {
+            document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
+          }
         } else {
           console.warn('No settings file found.');
         }

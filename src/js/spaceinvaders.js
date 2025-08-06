@@ -136,43 +136,6 @@ Game.prototype.currentState = function() {
     return this.stateStack.length > 0 ? this.stateStack[this.stateStack.length - 1] : null;
 };
 
-//  Mutes or unmutes the game.
-Game.prototype.mute = function(mute) {
-
-    //  If we've been told to mute, mute.
-    if(mute === true) {
-        this.sounds.mute = true;
-
-        
-
-    } else if (mute === false) {
-        this.sounds.mute = false;
-    } else {
-        // Toggle mute instead...
-        this.sounds.mute = this.sounds.mute ? false : true;
-    }
-};
-
-function toggleMute() {
-    if (window.game && window.game.sounds) {
-        // Toggle the mute state
-        window.game.mute();
-
-        // Update the GainNode's gain value based on the mute state and change the icon.
-        if (window.game.sounds.mute){
-            window.game.sounds.gainNode.gain.value = 0.0;
-            document.getElementById('muteIcon').src = "assets/images/volume-off.svg";
-        } else {
-            window.game.sounds.gainNode.gain.value = 1.0;
-            document.getElementById('muteIcon').src = "assets/images/volume.svg";
-        }
-        
-        console.log("Mute toggled. Current state:", window.game.sounds.mute);
-    } else {
-        console.error("Game or sounds object is not initialized.");
-    }
-}
-
 //  The main loop.
 function GameLoop(game) {
     var currentState = game.currentState();
@@ -244,7 +207,7 @@ Game.prototype.touchend = function(s) {
 };
 
 Game.prototype.touchmove = function(e) {
-	var currentX = e.changedTouches[0].pageX;
+    var currentX = e.changedTouches[0].pageX;
     if (this.previousX > 0) {
         if (currentX > this.previousX) {
             delete this.pressedKeys[KEY_LEFT];
@@ -275,10 +238,10 @@ WelcomeState.prototype.enter = function(game) {
     // Create and load the sounds.
     game.sounds = new Sounds();
     game.sounds.init();
+    game.sounds.loadSound('slowMusic', 'assets/sounds/slowMusic.wav');
     game.sounds.loadSound('shoot', 'assets/sounds/shoot.wav');
     game.sounds.loadSound('bang', 'assets/sounds/bang.wav');
     game.sounds.loadSound('explosion', 'assets/sounds/explosion.wav');
-    game.sounds.loadSound('slowMusic', 'assets/sounds/slowMusic.wav');
     game.sounds.loadSound('music', 'assets/sounds/music.wav');
     game.sounds.loadSound('fastMusic', 'assets/sounds/fastMusic.wav');
 };
@@ -604,6 +567,7 @@ PlayState.prototype.update = function(game, dt) {
 
     //  Check for victory
     if(this.invaders.length === 0) {
+        game.sounds.stopSound('music');
         game.score += this.level * 50;
         game.level += 1;
         game.moveToState(new LevelIntroState(game.level));
@@ -771,12 +735,18 @@ PauseState.prototype.draw = function(game, dt, ctx) {
 */
 function LevelIntroState(level) {
     this.level = level;
-    this.countdownMessage = "3";
+    this.countdownMessage = "3";  
     
-    //Delay music to start when the round starts
-    setTimeout(() => {
+    // Start the music.
+    // Speed of music depends on level
+    // If level is 1-3 play slow music, if 4-6 play normal music, 7+ play fast music
+    if (this.level < 4){
+        game.sounds.playSound('slowMusic');
+    } else if (this.level > 3 && this.level < 7){
         game.sounds.playSound('music');
-    }, 1000);
+    } else {
+        game.sounds.playSound('fastMusic');
+    }
 }
 
 LevelIntroState.prototype.update = function(game, dt) {
@@ -908,26 +878,34 @@ function Sounds() {
     this.activeSources = {};
 
     // gainNode for volume control.
-    this.gainNode = null;
+    this.musicGainNode = null;
+    this.sfxGainNode = null;
 
     // Mute state
-    this.mute = false;
+    this.muteMusic = true;
+    this.muteSFX = true;
 }
 
 Sounds.prototype.init = function() {
 
+    this.muteMusic = true; // Start with music muted
+    this.muteSFX = true; // Start with SFX muted
+
     //  Create the audio context, paying attention to webkit browsers.
     context = window.AudioContext || window.webkitAudioContext;
     this.audioContext = new context();
-
+    
     // Create a gainNode for volume control
-    this.gainNode = this.audioContext.createGain();
-    this.gainNode.gain.value = 0; // 1 - Full Volume / 0 - Mute
+    this.musicGainNode = this.audioContext.createGain();
+    this.musicGainNode.gain.value = this.muteMusic ? 0 : 1; // 1 - Full Volume / 0 - Mute
+    // Create a gainNode for volume control
+    this.sfxGainNode = this.audioContext.createGain();
+    this.sfxGainNode.gain.value = this.muteSFX ? 0 : 1; // 1 - Full Volume / 0 - Mute
 
     // Connect the GainNode to the audio context destination.
-    this.gainNode.connect(this.audioContext.destination);
+    this.musicGainNode.connect(this.audioContext.destination);
+    this.sfxGainNode.connect(this.audioContext.destination);
     
-    this.mute = true;
 };
 
 Sounds.prototype.loadSound = function(name, url) {
@@ -973,8 +951,12 @@ Sounds.prototype.playSound = function(name) {
     const source = this.audioContext.createBufferSource();
     source.buffer = this.sounds[name].buffer;
 
-    // Create a gain node to control the volume.
-    source.connect(this.gainNode);
+    // If the sound is music, connect to the music gain node, otherwise connect to the sfx gain node
+    if (name == "music" || name == "slowMusic" || name == "fastMusic") {
+        source.connect(this.musicGainNode);
+    } else {
+        source.connect(this.sfxGainNode);
+    }
 
     source.start(0);
 
@@ -989,8 +971,57 @@ Sounds.prototype.playSound = function(name) {
 
 Sounds.prototype.stopSound = function(name) {
     //Stop the sound if it is currently playing
+    //Check what speed of music is playing
+    if (name == "music"){
+        if (this.activeSources['slowMusic']){
+            this.activeSources['slowMusic'].stop();
+            delete this.activeSources['slowMusic'];
+        } else if (this.activeSources['fastMusic']){
+            this.activeSources['fastMusic'].stop();
+            delete this.activeSources['fastMusic'];
+        } else if (this.activeSources['music']){
+            this.activeSources['music'].stop();
+            delete this.activeSources['music'];
+        }
+        return;
+    }
+
     if (this.activeSources[name]) {
         this.activeSources[name].stop();
         delete this.activeSources[name];
     }
 };
+
+
+Sounds.prototype.toggleMusicMute = function() {
+    this.muteMusic = !this.muteMusic;
+    this.musicGainNode.gain.value = this.muteMusic ? 0 : 1; // 1 - Full Volume / 0 - Mute
+
+    var musicIcon = document.getElementById('musicIcon');
+    if (musicIcon) {
+        musicIcon.src = this.muteMusic ? 'assets/images/music-off.svg' : 'assets/images/music.svg';
+    }
+}
+
+Sounds.prototype.toggleSFXMute = function() {
+    this.muteSFX = !this.muteSFX;
+    this.sfxGainNode.gain.value = this.muteSFX ? 0 : 1; // 1 - Full Volume / 0 - Mute
+
+    var sfxIcon = document.getElementById('sfxIcon');
+    if (sfxIcon) {
+        sfxIcon.src = this.muteSFX ? 'assets/images/volume-off.svg' : 'assets/images/volume.svg';
+    }
+}
+
+// Expose global functions for index.html onclick handlers
+window.toggleMusicMute = function() {
+    if (window.game && window.game.sounds) {
+        window.game.sounds.toggleMusicMute();
+    }
+}
+
+window.toggleSFXMute = function() {
+    if (window.game && window.game.sounds) {
+        window.game.sounds.toggleSFXMute();
+    }
+}

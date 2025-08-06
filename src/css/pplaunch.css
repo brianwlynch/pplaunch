@@ -57,14 +57,16 @@ body {
     font-family: RobotoThin;
 }
 
-.mute {
+.sound-controls {
     visibility: hidden;
     opacity: 0;
     filter: invert(1);
     transition: opacity 300ms ease-in, visibility 0ms ease-in 250ms;
+    padding-right: 24px;
+
 }
   
-.mute.shown {
+.sound-controls.shown {
     visibility: visible;
     opacity: 1;
     filter: invert(1);

@@ -1,7 +1,7 @@
 {
   "name": "pplaunch",
   "productName": "TFC Public Panel Launcher",
-  "version": "3.1.5",
+  "version": "3.1.0",
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/index.js",
   "scripts": {
@@ -22,7 +22,7 @@
     "electron-store": "^10.0.1"
   },
   "devDependencies": {
-    "@electron-forge/cli": "^7.8.1",
+    "@electron-forge/cli": "^7.8.3",
     "@electron-forge/maker-deb": "^7.8.1",
     "@electron-forge/maker-rpm": "^7.8.1",
     "@electron-forge/maker-squirrel": "^7.8.1",
@@ -52,7 +52,9 @@
       "allowToChangeInstallationDirectory": false
     },
     "linux": {
-      "target": ["deb"],
+      "target": [
+        "deb"
+      ],
       "icon": "src/assets/images/icon.png",
       "category": "Utility",
       "maintainer": "NEP Group, Brian Lynch",
