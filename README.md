@@ -15,13 +15,13 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 
 ## Changelog
 
-### v3.1.0 - **Beta**
+### v3.1.0 - **Latest**
 - Adding support for Linux installs
 - If you set `TFC_INSTANCE` to "demo" on the settings page, it will redirect you to `NEPGroup.com`
 - If `TFC_INSTANCE` instance is set to "none", the settings box will be empty.
 - Independent sound controls for music and sfx.
 
-### v3.0.1 - **Latest**
+### v3.0.1
 - Fixed persistant zoom across pages
 - Checks to see if the settings.json exists
 
@@ -35,7 +35,6 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - Initial launcher built by Dennis
 
 ## Future Changes
-- [x] *Implement Github LFS* - I didn't know you can upload larger files on the releases page. This is no longer needed
 - [x] *Ubuntu support* - Added in `v3.1.0` release
 - [x] *Option to mute music and sfx independently in shenanigans* - Added in `v3.1.0`
 - [ ] Option for other types of TFC instances that use different url patterns
