@@ -27,6 +27,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - Independent sound controls for music and sfx.
 
 ### v3.0.1
+### v3.0.1
 - Fixed persistant zoom across pages
 - Checks to see if the settings.json exists
 
