@@ -14,19 +14,16 @@
     <title>Launching | The Fat Controller</title>
 
     <script>
-        const fs = require('fs');
-        const path = require('path');
-        const { app } = require('electron').remote || require('@electron/remote');
-        const { ipcRenderer } = require('electron');
-
-        const settingsPath = path.join(app.getPath('userData'), 'settings.json');
-
         var TFC_INSTANCE = null;
-        let DEBUG = null;
-        let TARGET_URL = null;
+        var DEBUG = null;
+        var TARGET_URL = null;
+        var BASE_URL = null;
+        var CUSTOM_INSTANCE = null;
+
         var FirstRun = true;
         let debugIcon;
         let alertIcon;
+
 
         
         window.onload = () => {
@@ -36,13 +33,13 @@
             setInterval(checkServer, 5000);
 
             document.getElementById('settings_icon').addEventListener('click', () => {
-                ipcRenderer.send("open-settings-window");
+                window.appAPI.openSettings();
                 if (DEBUG) {
                     console.log("Settings icon clicked, opening settings window.");
                 }
             });
             document.getElementById('help_icon').addEventListener('click', () => {
-                ipcRenderer.send("open-help-window");
+                window.appAPI.openHelp();
                 if (DEBUG) {
                     console.log("Help icon clicked, opening help window.");
                 }
@@ -50,9 +47,10 @@
         };
 
         function loadSettings() {
-            if (fs.existsSync(settingsPath)) {
-                const settings = JSON.parse(fs.readFileSync(settingsPath));
-
+            const settings = window.settingsAPI.load()
+            if (Object.keys(settings).length === 0) {
+                console.warn('No settings file found.');
+            } else {
                 TFC_INSTANCE = settings.TFC_INSTANCE || '';
                 DEBUG = !!settings.DEBUG;
                 
@@ -60,16 +58,17 @@
                     console.log("TFC Instance loaded:", TFC_INSTANCE);
                     console.log("Debug mode:", DEBUG);
                 }
+                FirstRun = false;
 
                 if(DEBUG){
-                    ipcRenderer.send("debug-active");
+                    window.appAPI.debugActive();
                 }
 
                 if(debugIcon) debugIcon.style.visibility = DEBUG ? "visible" : "hidden";
+
+                BASE_URL = settings.BASE_URL || "nep";
+                CUSTOM_INSTANCE = settings.CUSTOM_INSTANCE || "";
                 
-                FirstRun = false;
-            } else {
-                console.warn('No settings file found.');
             }
         }
 
@@ -83,12 +82,33 @@
             } else {
                 alertIcon.style.visibility = "hidden";   
             }
-            
-            if (TFC_INSTANCE.toLowerCase() == "demo"){
-                TARGET_URL = "https://nepgroup.com"
+
+            if (!CUSTOM_INSTANCE && BASE_URL == "custom") {
+                console.warn("CUSTOM_URL not set. Please check your settings!");
+                alertIcon.style.visibility = "visible";  
+                loadSettings();
+                return;
             } else {
-                TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
-            }          
+                alertIcon.style.visibility = "hidden";   
+            }
+            
+            switch(BASE_URL) {
+                case "nep":
+                    TARGET_URL = "https://control." + TFC_INSTANCE + ".nepgroup.io/production/pool/panel";
+                    break;
+                case "tfc":
+                    TARGET_URL = "https://control." + TFC_INSTANCE + ".tfclabs.com/production/pool/panel";
+                    break;
+                case "demo":
+                    TARGET_URL = "https://nepgroup.com";
+                    break;
+                case "custom":
+                    TARGET_URL = CUSTOM_INSTANCE;
+                    break;
+                default:
+                    TARGET_URL = "";
+            }
+
 
             try {
                 console.info("Checking TFC at:", TARGET_URL);
@@ -114,22 +134,19 @@
             if (inGameMode){
                 document.getElementById("redirect").classList.add("shown");
                 return;
-            } else {
-                // window.location.href = TARGET_URL;
-                ipcRenderer.send("open-tfc-window", TARGET_URL);
-            }
+            } else window.appAPI.openTFC(TARGET_URL);
         }
         function redirectGame(){
             if (DEBUG){
                 console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
                 return;
-            } else window.location.href = TARGET_URL;
+            } else window.appAPI.openTFC(TARGET_URL);
         }
         
-        ipcRenderer.on('settings-updated', () => {
-            loadSettings();
-            console.log("Loading Settings");
-        });
+        // ipcRenderer.on('settings-updated', () => {
+        //     loadSettings();
+        //     console.log("Loading Settings");
+        // });
     </script>
 </head>
 
@@ -176,7 +193,7 @@
             onclick="toggleMusicMute()"
             id="musicIcon"
             class="sound-controls"/>
-        <p id="footer">PPLaunch v3.1.0 &nbsp; | &nbsp; August 6, 2025</p>
+        <p id="footer">PPLaunch v3.1.1 &nbsp; | &nbsp; August 11, 2025</p>
     </div>
 </body>
 

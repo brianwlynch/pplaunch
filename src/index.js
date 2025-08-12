@@ -58,7 +58,6 @@ if(require('electron-squirrel-startup')) {
 
 function loadSettings() {
   try {
-    console.log("JSON:", JSON.parse(fs.readFileSync(settingsPath, 'utf8')));
     return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
   } catch (e) {
     return { AUTO_START: false, ZOOM_LEVLES: {} };
@@ -72,7 +71,7 @@ function saveSettings(settings) {
 let settings = loadSettings();
 let zoomLevels = settings.ZOOM_LEVLES || {};
 
-// Autostart on boot - Windows only
+//Autostart on boot - Windows only
 app.on('ready', () => {
   app.setLoginItemSettings({
     openAtLogin: true,
@@ -123,21 +122,21 @@ let tfcWindow;
 
 // main Window
 const createWindow = () => {
-  // Create the browser window.
   mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
     fullscreen: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js'),
-      nodeIntegration: true,
-      contextIsolation: false,
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false,
     },
   });
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   
-  // mainWindow.webContents.toggleDevTools();
+  //mainWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(mainWindow.webContents);
 };
 
@@ -153,14 +152,16 @@ function openSettingsPanel(){
     frame: false,
     roundedCorners: true,
     webPreferences:{
-      nodeIntegration: true,
-      contextIsolation: false
+      preload: path.join(__dirname, 'preload.js'),
+      nodeIntegration: false,
+      contextIsolation: true,
+      sandbox: false,
     }
   })
 
   settingsWindow.loadFile(path.join(__dirname, 'settings.html'));
 
-  // settingsWindow.webContents.toggleDevTools();
+  //settingsWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(settingsWindow.webContents);
 
 };
@@ -177,8 +178,9 @@ function openHelpPanel(){
     frame: false,
     roundedCorners: true,
     webPreferences:{
-      nodeIntegration: true,
-      contextIsolation: false
+      nodeIntegration: false,
+      contextIsolation: false,
+      sandbox: false,
     }
   })
 

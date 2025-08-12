@@ -1,4 +1,6 @@
 {
   "DEBUG": false,
-  "TFC_INSTANCE": "none"
+  "TFC_INSTANCE": "none",
+  "BASE_URL": "nep",
+  "CUSTOM_INSTANCE": ""
 }

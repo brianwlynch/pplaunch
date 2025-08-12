@@ -64,45 +64,49 @@
         }
     </style>
     <script>
-      const fs = require('fs');
-      const path = require('path');
-      const { app } = require('electron').remote || require('@electron/remote');
-      const { ipcRenderer } = require('electron');
+      // const fs = require('fs');
+      // const path = require('path');
+      // const { app } = require('electron').remote || require('@electron/remote');
+      // const { ipcRenderer } = require('electron');
 
-      const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+      // const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
       window.onload = () => {
-        loadSettings();
+        const settings = window.settingsAPI.load();
+
+        document.getElementById('debugMode').checked = !! settings.DEBUG;
+        
+        if(settings.TFC_INSTANCE === "none") {
+          document.getElementById('tfcInstance').value = '';
+        } else {
+          document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
+        }
+        
+        select.value = settings.BASE_URL || "nep";
+        console.log(settings.BASE_URL || "nep");
+        const config = optionsConfig[select.value];
+        baseURL.textContent = config.base;
+        config.show.forEach(id => document.getElementById(id).style.display = "block");
+        config.hide.forEach(id => document.getElementById(id).style.display = "none");
+        
+
+        document.getElementById('customInstance').value = settings.CUSTOM_INSTANCE || '';
+
       };
 
       function saveSettings() {
-        const settings = {
+
+        window.settingsAPI.save( {
           DEBUG: document.getElementById('debugMode').checked,
           TFC_INSTANCE: document.getElementById('tfcInstance').value,
-        };
-
-        fs.writeFileSync(settingsPath, JSON.stringify(settings, null, 2));
-        alert('Settings saved!');
-        
-        ipcRenderer.send("settings-updated");
+          BASE_URL: document.getElementById('baseURLDropdown').value,
+          CUSTOM_INSTANCE: document.getElementById('customInstance').value,
+        });
+        window.settingsAPI.notifyUpdate();
 
         window.close();
       }
 
-      function loadSettings() {
-        if (fs.existsSync(settingsPath)) {
-          const settings = JSON.parse(fs.readFileSync(settingsPath));
-
-          document.getElementById('debugMode').checked = !!settings.DEBUG;
-          if(settings.TFC_INSTANCE === "none") {
-            document.getElementById('tfcInstance').value = '';
-          } else {
-            document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
-          }
-        } else {
-          console.warn('No settings file found.');
-        }
-      }
     </script>
 </head>
 <body>
@@ -117,15 +121,83 @@
     </div>
 
     <div class="form-group">
-      <label for="tfcInstance">TFC Instance</label>
+      <label for="baseURLDropdown"><b><u>TFC Base URL:</u></b></label><br>
+      <select
+        name="baseURLDropdown"
+        id="baseURLDropdown"
+        style="width: 150px;
+               height: 50px;
+               line-height: 50px;
+               text-align: center;">
+        <option value="nep">.NEPGroup.io</option>
+        <option value="tfc">.TFCLabs.com</option>
+        <option value="demo">Demo Mode</option>
+        <option value="custom">Custom URL</option>
+      </select>
+    </div>
+
+
+    <div class="form-group" id="tfcInstanceDiv">
+      <label for="tfcInstance"><b><u>TFC Instance:</u></b></label>
       <div class="tfc-wrapper">
         <span>https://control.</span>
-        <input type="text" id="tfcInstance" placeholder="truck" />
-        <span>.nepgroup.io</span>
+        <input type="text" id="tfcInstance" placeholder="tfc" />
+        <span id="baseURL">.nepgroup.io</span>
       </div>
+    </div>
+    
+    <div class="form-group" id="customDiv" style="display: none;">
+      <label for="customInstance"><b><u>Custom URL:</u></b></label><br>
+      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/>
+    </div>
+
+    <div class="form-group" id="demoDiv" style="display: none;">
+      <label for="demo"><b><u>Demo Mode:</u></b></label><br>
+      <span id="demo">The panel will redirect to https://nepgroup.com</span>
     </div>
 
     <button onclick="saveSettings()">Save and Close</button>
   </div>
+  
+  <script>
+    const select = document.getElementById("baseURLDropdown");
+    const baseURL = document.getElementById("baseURL");
+    const demoDiv = document.getElementById("demoDiv");
+    const tfcInstanceDiv = document.getElementById("tfcInstanceDiv");
+    const customDiv = document.getElementById("customDiv");
+
+    const optionsConfig = {
+      nep: {
+        base: ".nepgroup.io",
+        show: ["tfcInstanceDiv"],
+        hide: ["demoDiv", "customDiv"]
+      },
+      tfc: {
+        base: ".tfclabs.com",
+        show: ["tfcInstanceDiv"],
+        hide: ["demoDiv", "customDiv"]
+      },
+      demo: {
+        base: "",
+        show: ["demoDiv"],
+        hide: ["tfcInstanceDiv", "customDiv"]
+      },
+      custom: {
+        base: "",
+        show: ["customDiv"],
+        hide: ["demoDiv", "tfcInstanceDiv"]
+      },
+    }
+
+    select.addEventListener("change", () => {
+      const config = optionsConfig[select.value];
+      baseURL.textContent = config.base;
+      
+      config.show.forEach(id => document.getElementById(id).style.display = "block");
+      config.hide.forEach(id => document.getElementById(id).style.display = "none");
+
+    });
+
+  </script>
 </body>
 </html>
