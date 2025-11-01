@@ -96,18 +96,12 @@ Game.prototype.initialise = function(gameCanvas) {
 Game.prototype.moveToState = function(state) {
  
    //  If we are in a state, leave it.
-   if(this.currentState() && this.currentState().leave) {
-     this.currentState().leave(game);
-     this.stateStack.pop();
-   }
+   const cur = this.currentState();
+   if(cur && cur.leave) this.currentState().leave(this);
+   if(cur) this.stateStack.pop();
    
    //  If there's an enter function for the new state, call it.
-   if(state.enter) {
-     state.enter(game);
-   }
- 
-   //  Set the current state.
-   this.stateStack.pop();
+   if(state.enter) state.enter(this);
    this.stateStack.push(state);
  };
 
@@ -145,40 +139,29 @@ function GameLoop(game) {
         var dt = 1 / game.config.fps;
 
         //  Get the drawing context.
-        var ctx = this.gameCanvas.getContext("2d");
+        var ctx = game.gameCanvas.getContext("2d");
         
         //  Update if we have an update function. Also draw
         //  if we have a draw function.
-        if(currentState.update) {
-            currentState.update(game, dt);
-        }
-        if(currentState.draw) {
-            currentState.draw(game, dt, ctx);
-        }
+        if(currentState.update) currentState.update(game, dt);
+        if(currentState.draw) currentState.draw(game, dt, ctx);
     }
 }
 
 Game.prototype.pushState = function(state) {
 
     //  If there's an enter function for the new state, call it.
-    if(state.enter) {
-        state.enter(game);
-    }
-    //  Set the current state.
+    if(state.enter) state.enter(this);
     this.stateStack.push(state);
 };
 
 Game.prototype.popState = function() {
 
     //  Leave and pop the state.
-    if(this.currentState()) {
-        if(this.currentState().leave) {
-            this.currentState().leave(game);
-        }
-
-        //  Set the current state.
-        this.stateStack.pop();
-    }
+    const cur = this.currentState();
+    if(!cur) return;
+    if(cur.leave) cur.leave(this);
+    this.stateStack.pop();
 };
 
 //  The stop function stops the game.
@@ -238,12 +221,13 @@ WelcomeState.prototype.enter = function(game) {
     // Create and load the sounds.
     game.sounds = new Sounds();
     game.sounds.init();
-    game.sounds.loadSound('slowMusic', 'assets/sounds/slowMusic.wav');
     game.sounds.loadSound('shoot', 'assets/sounds/shoot.wav');
     game.sounds.loadSound('bang', 'assets/sounds/bang.wav');
     game.sounds.loadSound('explosion', 'assets/sounds/explosion.wav');
-    game.sounds.loadSound('music', 'assets/sounds/music.wav');
+    game.sounds.loadSound('slowMusic', 'assets/sounds/slowMusic.wav');
+    game.sounds.loadSound('medMusic', 'assets/sounds/medMusic.wav');
     game.sounds.loadSound('fastMusic', 'assets/sounds/fastMusic.wav');
+    console.log("Sounds loaded!");
 };
 
 WelcomeState.prototype.update = function (game, dt) {
@@ -276,9 +260,14 @@ WelcomeState.prototype.keyDown = function(game, keyCode) {
     }
 };
 
-function GameOverState() {
-    game.sounds.stopSound('music');
-}
+function GameOverState() { }
+
+GameOverState.prototype.enter = function(game){
+    console.log("**GAME OVER**");
+    if (game.sounds.currentMusic){
+        game.sounds.stopSound(game.sounds.currentMusic);
+    }
+};
 
 GameOverState.prototype.update = function(game, dt) {
 
@@ -329,6 +318,12 @@ function PlayState(config, level) {
 }
 
 PlayState.prototype.enter = function(game) {
+
+    if(game.sounds.currentMusic) {
+        game.sounds.stopSound(game.sounds.currentMusic);
+    }
+    const name = this.level < 4? 'slowMusic' : (this.level < 7 ? 'medMusic' : 'fastMusic');
+    game.sounds.playSound(name);
 
     //  Create the ship.
     this.ship = new Ship(game.width / 2, game.gameBounds.bottom);
@@ -567,7 +562,8 @@ PlayState.prototype.update = function(game, dt) {
 
     //  Check for victory
     if(this.invaders.length === 0) {
-        game.sounds.stopSound('music');
+        console.log('**LEVEL OVER**');
+        game.sounds.stopSound(game.sounds.currentMusic);
         game.score += this.level * 50;
         game.level += 1;
         game.moveToState(new LevelIntroState(game.level));
@@ -735,34 +731,17 @@ PauseState.prototype.draw = function(game, dt, ctx) {
 */
 function LevelIntroState(level) {
     this.level = level;
-    this.countdownMessage = "3";  
-    
-    // Start the music.
-    // Speed of music depends on level
-    // If level is 1-3 play slow music, if 4-6 play normal music, 7+ play fast music
-    if (this.level < 4){
-        game.sounds.playSound('slowMusic');
-    } else if (this.level > 3 && this.level < 7){
-        game.sounds.playSound('music');
-    } else {
-        game.sounds.playSound('fastMusic');
-    }
+    this.countdownMessage = "3";
+    console.log("**START LEVEL**");
 }
 
 LevelIntroState.prototype.update = function(game, dt) {
 
     //  Update the countdown.
-    if(this.countdown === undefined) {
-        this.countdown = 3; // countdown from 3 secs
-    }
+    if(this.countdown === undefined) this.countdown = 3; // countdown from 3 secs
     this.countdown -= dt;
-
-    if(this.countdown < 2) { 
-        this.countdownMessage = "2"; 
-    }
-    if(this.countdown < 1) { 
-        this.countdownMessage = "1"; 
-    } 
+    if(this.countdown < 2) this.countdownMessage = "2"; 
+    if(this.countdown < 1) this.countdownMessage = "1";
     if(this.countdown <= 0) {
         //  Move to the next level, popping this state.
         game.moveToState(new PlayState(game.config, this.level));
@@ -884,6 +863,9 @@ function Sounds() {
     // Mute state
     this.muteMusic = true;
     this.muteSFX = true;
+
+    // What background music is playing
+    this.currentMusic = null;
 }
 
 Sounds.prototype.init = function() {
@@ -892,8 +874,8 @@ Sounds.prototype.init = function() {
     this.muteSFX = true; // Start with SFX muted
 
     //  Create the audio context, paying attention to webkit browsers.
-    context = window.AudioContext || window.webkitAudioContext;
-    this.audioContext = new context();
+    const AudioCtx = window.AudioContext || window.webkitAudioContext;
+    this.audioContext = new AudioCtx();
     
     // Create a gainNode for volume control
     this.musicGainNode = this.audioContext.createGain();
@@ -937,9 +919,12 @@ Sounds.prototype.loadSound = function(name, url) {
 Sounds.prototype.playSound = function(name) {
 
     // If the song is already playing, don't play it again.
-    if( this.activeSources[name] && name == "music"){
+    if( this.activeSources[name] && ['medMusic', 'slowMusic', 'fastMusic'].includes(name)){
+        console.warn(name + " is already playing!")
         return;
     }
+
+    console.log("Includes `music`: " + ['medMusic', 'slowMusic', 'fastMusic'].includes(name));
 
     //  If we've not got the sound, don't bother playing it.
     if(this.sounds[name] === undefined || this.sounds[name] === null) {
@@ -952,43 +937,46 @@ Sounds.prototype.playSound = function(name) {
     source.buffer = this.sounds[name].buffer;
 
     // If the sound is music, connect to the music gain node, otherwise connect to the sfx gain node
-    if (name == "music" || name == "slowMusic" || name == "fastMusic") {
+    // If it is music, stop the old one first
+    if (name == "medMusic" || name == "slowMusic" || name == "fastMusic") {
         source.connect(this.musicGainNode);
+        if(this.currentMusic && this.currentMusic !== name){
+            this.stopSound(this.currentMusic);
+        }
+        this.currentMusic = name;
     } else {
         source.connect(this.sfxGainNode);
     }
 
     source.start(0);
+    console.log("Playing: " + name + ", " + source);
 
 
     //Store so it can be  stopped
     this.activeSources[name] = source;
+    console.log(Object.keys(this.activeSources));
 
     source.onended = () => {
         delete this.activeSources[name];
+        if(this.currentMusic === name){
+            this.currentMusic = null;
+        }
     }
 };
 
 Sounds.prototype.stopSound = function(name) {
-    //Stop the sound if it is currently playing
-    //Check what speed of music is playing
-    if (name == "music"){
-        if (this.activeSources['slowMusic']){
-            this.activeSources['slowMusic'].stop();
-            delete this.activeSources['slowMusic'];
-        } else if (this.activeSources['fastMusic']){
-            this.activeSources['fastMusic'].stop();
-            delete this.activeSources['fastMusic'];
-        } else if (this.activeSources['music']){
-            this.activeSources['music'].stop();
-            delete this.activeSources['music'];
+    const source = this.activeSources[name];
+    if (source){
+        try{
+            source.stop(0);
+        } catch (e) {
+            console.warn("Sound already stopped: " + name);
         }
-        return;
+        delete (this.activeSources[name]);
     }
 
-    if (this.activeSources[name]) {
-        this.activeSources[name].stop();
-        delete this.activeSources[name];
+    if(this.currentMusic === name){
+        this.currentMusic = null;
     }
 };
 

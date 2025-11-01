@@ -60,7 +60,7 @@ function loadSettings() {
   try {
     return JSON.parse(fs.readFileSync(settingsPath, 'utf8'));
   } catch (e) {
-    return { AUTO_START: false, ZOOM_LEVLES: {} };
+    return { AUTO_START: false, ZOOM_LEVELS: {} };
   }
 }
 
@@ -69,7 +69,7 @@ function saveSettings(settings) {
 }
 
 let settings = loadSettings();
-let zoomLevels = settings.ZOOM_LEVLES || {};
+let zoomLevels = settings.ZOOM_LEVELS || {};
 
 //Autostart on boot - Windows only
 app.on('ready', () => {
@@ -215,7 +215,7 @@ function openTFCWindow(target_url){
       const newLevel = level + delta;
       wc.setZoomLevel(newLevel);
       zoomLevels[domainKey] = newLevel;
-      settings.ZOOM_LEVLES = zoomLevels;
+      settings.ZOOM_LEVELS = zoomLevels;
       saveSettings(settings);
     };
 
@@ -234,6 +234,10 @@ function openTFCWindow(target_url){
   // Stop listening for shortcuts
   tfcWindow.on('closed', () => {
     globalShortcut.unregisterAll();
+    if(tfcPingTimer) {
+      clearInterval(tfcPingTimer);
+      tfcPingTimer = null;
+    }
   });
 
   tfcWindow.webContents.on('did-navigate-in-page', () => {
@@ -243,6 +247,39 @@ function openTFCWindow(target_url){
     tfcWindow.webContents.setZoomLevel(savedZoom);
   });
 };
+
+let tfcPingTimer = null;
+
+function startTFCHealthCheck(url){
+  if(tfcPingTimer){
+    clearInterval(tfcPingTimer);
+    tfcPingTimer = null;
+  }
+
+  tfcPingTimer = setInterval(async () => {
+    try{
+      const res = await fetch(url, {method: 'GET'});
+      await res.text();
+    } catch (e) {
+      console.warn('TFC connectivity lost: ', e?.message || e);
+
+      clearInterval(tfcPingTimer);
+      tfcPingTimer = null;
+
+      // Close TFC Window
+      try{
+          if(tfcWindow && !tfcWindow.isDestroyed()) {
+            tfcWindow.close();
+          }
+      } catch (_) {}
+
+      // ReOpen Main Window (TFC is Loading)
+      if(!mainWindow || mainWindow.isDestroyed()){
+        createWindow();
+      }
+    }
+  }, 5000);
+}
 
 
 // ######################
@@ -364,6 +401,8 @@ app.whenReady().then(() => {
       if(mainWindow){
         mainWindow.close();
       }
+
+      startTFCHealthCheck(target_url);
     });
   });
   
