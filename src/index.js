@@ -4,6 +4,7 @@ const path = require('node:path');
 const electronSquirrelStartup = require('electron-squirrel-startup');
 const { fstat } = require('node:fs');
 const fs = require('fs');
+const { eventNames } = require('node:process');
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 const isMacOs = process.platform == "darwin";
@@ -13,6 +14,44 @@ let target_url = "";
 if (require('electron-squirrel-startup')) {
   app.quit();
 }
+
+//Only allow the app to run once
+const appLocked = app.requestSingleInstanceLock();
+if (!appLocked){
+  //Another instance is already running
+  app.quit()
+}
+
+app.on('second-instance', (event, commandLine, workingDirectory) => {
+  if (mainWindow){
+    try {
+      if (mainWindow.isMinimized()) mainWindow.restore();
+      if (!mainWindow.isVisible()) mainWindow.show();
+      mainWindow.focus();
+    } catch (err) {
+      console.error("Error Focusing on main window on second-instance: ", err);
+    }
+  }
+  if (tfcWindow){
+    try {
+      if (tfcWindow.isMinimized()) tfcWindow.restore();
+      if (!tfcWindow.isVisible()) tfcWindow.show();
+      tfcWindow.focus();
+    } catch (err) {
+      console.error("Error Focusing on TFC window on second-instance: ", err);
+    }
+  }
+  if (settingsWindow){
+    try {
+      if (settingsWindow.isMinimized()) settingsWindow.restore();
+      if (!settingsWindow.isVisible()) settingsWindow.show();
+      settingsWindow.focus();
+    } catch (err) {
+      console.error("Error Focusing on Settings window on second-instance: ", err);
+    }
+  }
+});
+
 
 require('@electron/remote/main').initialize();
 
@@ -170,7 +209,7 @@ function openSettingsPanel(){
 function openHelpPanel(){
   helpWindow = new BrowserWindow({
     width: 720,
-    height: 600,
+    height: 800,
     modal: true,
     parent: mainWindow,
     show: false,

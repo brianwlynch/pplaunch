@@ -15,6 +15,10 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 
 ## Changelog
 
+### v3.1.2 - **Latest**
+- Prevented App from launching twice
+- Changed contact info to QR for Github issues page
+
 ### v3.1.1 - **Latest**
 - Added support for different types of TFC URLs, including custom URLs
 - Changed from nodeIntegrations to using APIs on the preload.js
@@ -26,7 +30,6 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - If `TFC_INSTANCE` instance is set to "none", the settings box will be empty.
 - Independent sound controls for music and sfx.
 
-### v3.0.1
 ### v3.0.1
 - Fixed persistant zoom across pages
 - Checks to see if the settings.json exists
@@ -43,3 +46,5 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 ## Future Changes
 - [x] *Option for other types of TFC instances that use different url patterns* - Implemented in `v3.1.1`
 - [ ] High score list for shenanigans
+- [ ] Remove TFC messages when using custom URL
+- [ ] Make "TFC is Loading" sentence editable when using custom URL.
