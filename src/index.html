@@ -23,8 +23,6 @@
         var FirstRun = true;
         let debugIcon;
         let alertIcon;
-
-
         
         window.onload = () => {
             debugIcon = document.getElementById("debug_icon");
@@ -118,13 +116,18 @@
                 if (response.status === 404 || (response.status === 200 && text.includes("404"))){
                         console.error("Failed to fetch! - 404 Not Found")
                         return;
-                } else redirect();
+                } else {
+                    redirect()
+                }
+
+
 
             } catch (e) {
                 console.warn("Server likely not up yet:", e.message);
             }
         }
 
+        redirected = false;
         function redirect(){
             if (DEBUG){
                 console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
@@ -134,15 +137,51 @@
             if (inGameMode){
                 document.getElementById("redirect").classList.add("shown");
                 return;
-            } else window.appAPI.openTFC(TARGET_URL);
+            } else {
+                if (!redirected){
+                    window.appAPI.openTFC(TARGET_URL);
+                } else {
+                    console.warn("Already redirected!")
+                }
+            }
         }
         function redirectGame(){
             if (DEBUG){
                 console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
                 return;
-            } else window.appAPI.openTFC(TARGET_URL);
+            } else {
+                if (!redirected){
+                    window.appAPI.openTFC(TARGET_URL);
+                } else {
+                    console.warn("Already redirected!")
+                }
+            }
         }
         
+        document.addEventListener("DOMContentLoaded", function() {
+            window.bridge.updateMessage(updateMessage);
+        });
+
+        function updateMessage(event, message){
+            console.log("New Update Message:", message);
+            let icon = document.getElementById("cloud_icon");
+
+            switch(message){
+                case "Looking for updates":
+                    icon.src = "assets/images/cloud-search.svg";
+                    break;
+                case "Update available.":
+                    icon.src = "assets/images/cloud-download.svg";
+                    break;
+                case "Update not available.":
+                    icon.style.visibility = "hidden";
+                    break;
+                case "Update downloaded.":
+                    icon.src = "assets/images/cloud-check.svg";
+                    break;
+            }
+        }
+
         // ipcRenderer.on('settings-updated', () => {
         //     loadSettings();
         //     console.log("Loading Settings");
@@ -153,6 +192,9 @@
 <body>
     <img id="debug_icon" src="assets/images/debug.svg" class="debug_icon"/>
     <table style="position: absolute; right: 0; top: 0;">
+        <td>
+            <img id="cloud_icon" src="assets/images/cloud-question.svg" class="cloud_icon"/>
+        </td>
         <td>
             <img id="alert_icon" src="assets/images/alert.svg" class="alert_icon"/>
         </td>
@@ -193,7 +235,7 @@
             onclick="toggleMusicMute()"
             id="musicIcon"
             class="sound-controls"/>
-        <p id="footer">PPLaunch v3.1.2 &nbsp; | &nbsp; December 19, 2025</p>
+        <p id="footer">PPLaunch v3.1.3 &nbsp; | &nbsp; February 15, 2026</p>
     </div>
 </body>
 

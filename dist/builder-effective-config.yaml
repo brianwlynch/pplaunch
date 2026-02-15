@@ -2,9 +2,9 @@ directories:
   output: dist
   buildResources: build
 appId: TFC Public Panel Launcher
+productName: TFC Public Panel Launcher
 win:
-  target:
-    - nsis
+  target: nsis
   icon: src/assets/images/icon.ico
 nsis:
   oneClick: false
@@ -23,4 +23,4 @@ linux:
   description: Loading screen for TFC Touchscreens
   synopsis: TFC Public Panel Launcher
 files: []
-electronVersion: 36.3.2
+electronVersion: 36.9.5

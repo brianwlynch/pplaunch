@@ -2,7 +2,7 @@
 
 **PPLaunch** is a small client-side "app" meant for use on TFC public panels such as touchscreens and tablets. It enables these devices to power up before the TFC servers without the need for a human to refresh the browser once the TFC servers are online.
 
-The panel will open, then every five seconds it will try to connect to the TFC servers. Upon sucessful connection it will reload the page automatically. If you see a 401 page from TFC, then there is no assigned public panel for the IP address of the computer running this program.
+The panel will open, then every five seconds it will try to connect to the TFC servers. Upon successful connection it will reload the page automatically. If you see a 401 page from TFC, then there is no assigned public panel for the IP address of the computer running this program.
 
 **DISCLAIMER** - This is not an official TFC Product. If something does not work **DO NOT** contact TFC Support, they will not be able to help you!
 
@@ -15,11 +15,16 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 
 ## Changelog
 
+### v3.1.3
+- Goes back to wait screen if connection to TFC is lost for 45 seconds.
+- Added auto update features.
+  - ** These panels often don't get internet access so we will need a way to alert for updates outside the app as well.
+
 ### v3.1.2 - **Latest**
 - Prevented App from launching twice
 - Changed contact info to QR for Github issues page
 
-### v3.1.1 - **Latest**
+### v3.1.1
 - Added support for different types of TFC URLs, including custom URLs
 - Changed from nodeIntegrations to using APIs on the preload.js
 - `TFC_INSTANCE` to demo mode will no longer work. It now has its own drop down option.

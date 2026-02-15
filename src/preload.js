@@ -2,6 +2,7 @@ const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 const path = require('path');
 const { app } = require('@electron/remote');
+const { callbackify } = require('util');
 
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
@@ -17,3 +18,9 @@ contextBridge.exposeInMainWorld('appAPI', {
     openTFC: (url) => ipcRenderer.send("open-tfc-window", url),
     debugActive: () => ipcRenderer.send("debug-active"),
 });
+
+let bridge = {
+    updateMessage: (callback) => ipcRenderer.on("updateMessage", callback),
+};
+
+contextBridge.exposeInMainWorld("bridge", bridge);

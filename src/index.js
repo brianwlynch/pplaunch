@@ -1,19 +1,18 @@
 const { app, BrowserWindow, Menu, MenuItem, session, webContents, globalShortcut, ipcMain } = require('electron');
 const { assert } = require('node:console');
 const path = require('node:path');
-const electronSquirrelStartup = require('electron-squirrel-startup');
 const { fstat } = require('node:fs');
 const fs = require('fs');
 const { eventNames } = require('node:process');
 const settingsPath = path.join(app.getPath('userData'), 'settings.json');
+const { autoUpdater, AppUpdater } = require("electron-updater");
+
+autoUpdater.autoDownload = false;
+autoUpdater.autoInstallOnAppQuit = true;
 
 const isMacOs = process.platform == "darwin";
 let target_url = "";
 
-// Handle creating/removing shortcuts on Windows when installing/uninstalling.
-if (require('electron-squirrel-startup')) {
-  app.quit();
-}
 
 //Only allow the app to run once
 const appLocked = app.requestSingleInstanceLock();
@@ -55,40 +54,6 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
 
 require('@electron/remote/main').initialize();
 
-//Delete Registry key on uninstall
-//TODO: This doesn't work :(
-if(require('electron-squirrel-startup')) {
-  const squirrelEvent = process.argv[1];
-
-  if(squirrelEvent === '--squirrel-uninstall'){
-
-    //Remove AppData Folder
-    const appDataPath = path.join(app.getPath('appData'), app.getName());
-    try{
-      fs.rmSync(appDataPath, { recursive: true, force: true });
-      console.log('AppData folder removed.');
-    } catch (err) {
-      console.error('Failed to delete AppData folder: , err');
-    }
-
-
-    //Remove Startup Keys
-    const runKey = new WinReg({
-      hive: WinReg.HKCU,
-      key: '\\Software\\Microsoft\\Windows\\CurrentVersion\\Run',
-    });
-
-    runKey.remove(app.getName(), function(err) {
-      if (err) {
-        console.error('Failed to remove startup entry:', err);
-      } else console.log('Startup entry removed.');
-    });
-
-    app.quit();
-  }
-  
-  return;
-}
 
 // #################################
 // ### Save and Recall Settings  ###
@@ -110,7 +75,7 @@ function saveSettings(settings) {
 let settings = loadSettings();
 let zoomLevels = settings.ZOOM_LEVLES || {};
 
-//Autostart on boot - Windows only
+//Autostart on boot - Windows
 app.on('ready', () => {
   app.setLoginItemSettings({
     openAtLogin: true,
@@ -118,7 +83,7 @@ app.on('ready', () => {
   });
 });
 
-//Autostart on boot - Ubuntu only
+//Autostart on boot - Ubuntu
 if (process.platform === 'linux') {
 
   const autoStartDir = path.join(process.env.HOME, '.config', 'autostart');
@@ -160,7 +125,7 @@ let helpWindow;
 let tfcWindow;
 
 // main Window
-const createWindow = () => {
+const createMainWindow = () => {
   mainWindow = new BrowserWindow({
     width: 1920,
     height: 1080,
@@ -172,6 +137,14 @@ const createWindow = () => {
       sandbox: false,
     },
   });
+
+  mainWindow.showMessage = (message) => {
+    if (mainWindow && mainWindow.webContents && !mainWindow.isDestroyed()){
+      console.log("showMessage trapped");
+      console.log(message);
+      mainWindow.webContents.send("updateMessage", message);
+    }
+  };
 
   mainWindow.loadFile(path.join(__dirname, 'index.html'));
   
@@ -281,7 +254,82 @@ function openTFCWindow(target_url){
     const savedZoom = zoomLevels[domainKey] ?? 0;
     tfcWindow.webContents.setZoomLevel(savedZoom);
   });
+
+    // Keep Alive - poll every 5 seconds
+  tfcKeepAliveInterval = setInterval(() => tfcKeepAlive(target_url), 5000);
+  tfcWindow.on('closed', () => {
+    if (tfcKeepAliveInterval) {
+      clearInterval(tfcKeepAliveInterval);
+      tfcKeepAliveInterval = null;
+    }
+  });
+
 };
+
+
+let last_ok = Date.now();
+let tfcKeepAliveInterval = null;
+
+// keep-alive function (never throws; logs errors)
+async function tfcKeepAlive(target_url){
+  try {
+    console.info("Checking TFC at:", target_url);
+    const response = await fetch(target_url, { method: "GET" });
+    const text = await response.text();
+    const now = Date.now();
+    const timeout = 60; // seconds
+
+    if (response.status === 200 && !text.includes("404")) {
+      last_ok = now;
+      return;
+    }
+
+    console.log("Can't get to TFC (status/body)...");
+    if (now - last_ok > timeout * 1000) {
+      console.log("TFC unreachable for too long, falling back to main window");
+      // close tfcWindow only if it exists and isn't destroyed
+      if (tfcWindow && !tfcWindow.isDestroyed()) {
+        try { tfcWindow.close(); } catch (err) { console.warn('tfcWindow.close() failed', err.message); }
+      }
+
+      // reopen main window safely
+      try {
+        if (!mainWindow || mainWindow.isDestroyed()) {
+          createMainWindow();
+        } else {
+          if (mainWindow.isMinimized()) mainWindow.restore();
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      } catch (err) {
+        console.warn('Failed to show/create mainWindow', err.message);
+      }
+    }
+  } catch (e) {
+    console.warn("tfcKeepAlive fetch error:", e.message);
+    // also check timeout and fallback if needed
+    try {
+      const now = Date.now();
+      const timeout = 60;
+      if (now - last_ok > timeout * 1000) {
+        if (tfcWindow && !tfcWindow.isDestroyed()) {
+          try { tfcWindow.close(); } catch (err) { console.warn('tfcWindow.close() failed', err.message); }
+        }
+        if (!mainWindow || mainWindow.isDestroyed()) {
+          createMainWindow();
+        } else {
+          if (mainWindow.isMinimized()) mainWindow.restore();
+          mainWindow.show();
+          mainWindow.focus();
+        }
+      } else {
+        console.warn("Closing window in ~", Math.round(timeout - (now - last_ok)/1000), "seconds!")
+      }
+    } catch (err) {
+      console.warn('Error during fallback handling:', err.message);
+    }
+  }
+}
 
 
 // ######################
@@ -360,6 +408,10 @@ Menu.setApplicationMenu(
   )
 );
 
+app.on('window-all-closed', () => {
+  app.quit();
+});
+
 app.whenReady().then(() => {
   // Make sure the settings file exists
   if (!fs.existsSync(settingsPath)) {
@@ -371,13 +423,20 @@ app.whenReady().then(() => {
     }
   };
   
-  createWindow();
+  createMainWindow();
+
+  
+  autoUpdater.checkForUpdates()
+    .catch(err => console.warn("autoUpdated check failed:", err));
+  if(mainWindow && typeof mainWindow.showMessage === "function"){
+    mainWindow.showMessage("Looking for updates");
+  }
 
   // On OS X it's common to re-create a window in the app when the
   // dock icon is clicked and there are no other windows open.
   app.on('activate', () => {
     if (BrowserWindow.getAllWindows().length === 0) {
-      createWindow();
+      createMainWindow();
     }
   });
   
@@ -404,6 +463,8 @@ app.whenReady().then(() => {
         mainWindow.close();
       }
     });
+
+
   });
   
   ipcMain.on('debug-active',() => {
@@ -414,7 +475,20 @@ app.whenReady().then(() => {
   });
 });
 
+autoUpdater.on("update-available", (info) => {
+  mainWindow.showMessage("Update available.");
+  let pth = autoUpdater.downloadUpdate();
+  mainWindow.showMessage(pth);
+});
 
-app.on('window-all-closed', () => {
-  app.quit();
+autoUpdater.on("update-not-available", (info) => {
+  mainWindow.showMessage("Update not available.");
+});
+
+autoUpdater.on("update-downloaded", (info) => {
+  mainWindow.showMessage("Update downloaded.");
+});
+
+autoUpdater.on("error", (info) => {
+  mainWindow.showMessage(info);
 });
