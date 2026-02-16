@@ -155,8 +155,10 @@ const createMainWindow = () => {
 // Settings Page
 function openSettingsPanel(){
   settingsWindow = new BrowserWindow({
-    width: 500,
-    height: 375,
+    width: 675,
+    height: 450,
+    // width: 1920,
+    // height: 1080,
     modal: true,
     parent: mainWindow,
     show: false,
@@ -173,7 +175,7 @@ function openSettingsPanel(){
 
   settingsWindow.loadFile(path.join(__dirname, 'settings.html'));
 
-  //settingsWindow.webContents.toggleDevTools();
+  // settingsWindow.webContents.toggleDevTools();
   require('@electron/remote/main').enable(settingsWindow.webContents);
 
 };
@@ -489,6 +491,10 @@ autoUpdater.on("update-downloaded", (info) => {
   mainWindow.showMessage("Update downloaded.");
 });
 
-autoUpdater.on("error", (info) => {
-  mainWindow.showMessage(info);
+autoUpdater.on("error", (err) => {
+  const msg =
+    (err && (err.stack || err.message)) ? (err.stack || err.message)
+    : String(err);
+
+  mainWindow.showMessage(`Error: ${msg}`);
 });

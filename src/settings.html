@@ -62,45 +62,61 @@
         button:hover {
         background-color: #0056b3;
         }
+
+        /* Only for dev, not in production */
+        /* table, th, td {
+          border: 1px solid black;
+        } */
     </style>
     <script>
-      // const fs = require('fs');
-      // const path = require('path');
-      // const { app } = require('electron').remote || require('@electron/remote');
-      // const { ipcRenderer } = require('electron');
-
-      // const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
       window.onload = () => {
         const settings = window.settingsAPI.load();
 
+        //DEBUG
+        console.log("Debug:", settings.DEBUG)
         document.getElementById('debugMode').checked = !! settings.DEBUG;
         
+        //REDIRECT
+        console.log("Redirect:", settings.REDIRECT_MODE);
+        select.value = settings.REDIRECT_MODE || "tfc";
+
+        const config = optionsConfig[select.value];
+        config.show.forEach(id => document.getElementById(id).style.display = "block");
+        config.hide.forEach(id => document.getElementById(id).style.display = "none");
+        
+        //URL PREFIX
+        console.log("Prefix:", settings.URL_PREFIX)        
+        document.getElementById('urlPrefix').value = settings.URL_PREFIX || "control";
+
+        //TFC INSTANCE
+        console.log("TFC:", settings.TFC_INSTANCE)
         if(settings.TFC_INSTANCE === "none") {
           document.getElementById('tfcInstance').value = '';
         } else {
           document.getElementById('tfcInstance').value = settings.TFC_INSTANCE || '';
         }
         
-        select.value = settings.BASE_URL || "nep";
-        console.log(settings.BASE_URL || "nep");
-        const config = optionsConfig[select.value];
-        baseURL.textContent = config.base;
-        config.show.forEach(id => document.getElementById(id).style.display = "block");
-        config.hide.forEach(id => document.getElementById(id).style.display = "none");
-        
-
+        //BASE URL
+        console.log("BASE:", settings.BASE_URL)
+        document.getElementById('baseURLDropdown').value = settings.BASE_URL || "nep";
+  
+        //CUSTOM URL
+        console.log("CUSTOM:", settings.CUSTOM_INSTANCE)
         document.getElementById('customInstance').value = settings.CUSTOM_INSTANCE || '';
 
       };
 
       function saveSettings() {
+  
 
         window.settingsAPI.save( {
           DEBUG: document.getElementById('debugMode').checked,
           TFC_INSTANCE: document.getElementById('tfcInstance').value,
-          BASE_URL: document.getElementById('baseURLDropdown').value,
           CUSTOM_INSTANCE: document.getElementById('customInstance').value,
+          REDIRECT_MODE: document.getElementById('redirectMode').value,
+          URL_PREFIX: document.getElementById('urlPrefix').value,
+          BASE_URL: document.getElementById("baseURLDropdown").value,
         });
         window.settingsAPI.notifyUpdate();
 
@@ -120,38 +136,93 @@
       </label>
     </div>
 
-    <div class="form-group">
-      <label for="baseURLDropdown"><b><u>TFC Base URL:</u></b></label><br>
-      <select
-        name="baseURLDropdown"
-        id="baseURLDropdown"
-        style="width: 150px;
-               height: 50px;
-               line-height: 50px;
-               text-align: center;">
-        <option value="nep">.NEPGroup.io</option>
-        <option value="tfc">.TFCLabs.com</option>
-        <option value="demo">Demo Mode</option>
-        <option value="custom">Custom URL</option>
-      </select>
-    </div>
+    <p for="redirectMode"><b><u>Redirect Mode</u></b></p>
+    <select
+      name="redirectMode"
+      id="redirectMode"
+      style="width: 150px;
+              height: 50px;
+              line-height: 50px;
+              text-align: center;">
+      <option value="tfc">TFC</option>
+      <option value="demo">Demo Mode</option>
+      <option value="custom">Custom URL</option>
+    </select><hr>
 
+    <table id="tfcInstanceTable"  style="margin: 8px;">
+      <tr>
+        <th colspan="6"><u>
+          TFC Instance
+        </u></th>
+      </tr>
+      
+      <tr>
+        <td style="vertical-align:middle">
+          <H4>
+            HTTPS://
+          </H4>
+        </td>
 
-    <div class="form-group" id="tfcInstanceDiv">
-      <label for="tfcInstance"><b><u>TFC Instance:</u></b></label>
-      <div class="tfc-wrapper">
-        <span>https://control.</span>
-        <input type="text" id="tfcInstance" placeholder="tfc" />
-        <span id="baseURL">.nepgroup.io</span>
-      </div>
-    </div>
+        <td>
+          <select
+            name="urlPrefix"
+            id="urlPrefix"
+            style="width: 150px;
+                    height: 50px;
+                    line-height: 50px;
+                    text-align: center;">
+            <option value="control">CONTROL</option>
+            <option value="next">NEXT</option>
+          </select>
+        </td>
+
+        <td style="vertical-align:middle;">
+          <h4>
+            .
+          </h4>
+        </td>
+
+        <td>
+          <input
+            type="text"
+            id="tfcInstance"
+            placeholder="TFC"
+            style="width: 148px;
+                    height: 48px;
+                    text-align: center;
+                    padding: 0;
+                    margin: 0;
+                    "/>
+        </td>
+
+        <td>
+          <h4>
+            .
+          </h4>
+        </td>
+
+        <td>
+          <select
+            name="baseURLDropdown"
+            id="baseURLDropdown"
+            style="width: 150px;
+                    height: 50px;
+                    line-height: 50px;
+                    text-align: center;">
+            <option value="nep">.NEPGroup.io</option>
+            <option value="tfc">.TFCLabs.com</option>
+          </select>
+        </td>
+      </tr>
+
+    </table>
     
-    <div class="form-group" id="customDiv" style="display: none;">
+    <div class="form-group" id="customDiv" style="display: none; margin: 8px;">
       <label for="customInstance"><b><u>Custom URL:</u></b></label><br>
       <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/>
     </div>
 
-    <div class="form-group" id="demoDiv" style="display: none;">
+    <div class="form-group" id="demoDiv" style="display: none; margin: 8px;">
       <label for="demo"><b><u>Demo Mode:</u></b></label><br>
       <span id="demo">The panel will redirect to https://nepgroup.com</span>
     </div>
@@ -160,38 +231,28 @@
   </div>
   
   <script>
-    const select = document.getElementById("baseURLDropdown");
-    const baseURL = document.getElementById("baseURL");
+    const select = document.getElementById("redirectMode");
     const demoDiv = document.getElementById("demoDiv");
-    const tfcInstanceDiv = document.getElementById("tfcInstanceDiv");
+    const tfcInstanceTable = document.getElementById("tfcInstanceTable");
     const customDiv = document.getElementById("customDiv");
 
     const optionsConfig = {
-      nep: {
-        base: ".nepgroup.io",
-        show: ["tfcInstanceDiv"],
-        hide: ["demoDiv", "customDiv"]
-      },
       tfc: {
-        base: ".tfclabs.com",
-        show: ["tfcInstanceDiv"],
+        show: ["tfcInstanceTable"],
         hide: ["demoDiv", "customDiv"]
       },
       demo: {
-        base: "",
         show: ["demoDiv"],
-        hide: ["tfcInstanceDiv", "customDiv"]
+        hide: ["tfcInstanceTable", "customDiv"]
       },
       custom: {
-        base: "",
         show: ["customDiv"],
-        hide: ["demoDiv", "tfcInstanceDiv"]
+        hide: ["demoDiv", "tfcInstanceTable"]
       },
     }
 
     select.addEventListener("change", () => {
       const config = optionsConfig[select.value];
-      baseURL.textContent = config.base;
       
       config.show.forEach(id => document.getElementById(id).style.display = "block");
       config.hide.forEach(id => document.getElementById(id).style.display = "none");

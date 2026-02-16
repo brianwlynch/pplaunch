@@ -1,6 +1,8 @@
 {
   "DEBUG": false,
+  "URL_PREFIX": "control",
   "TFC_INSTANCE": "none",
   "BASE_URL": "nep",
+  "REDIRECT_MODE": "tfc",
   "CUSTOM_INSTANCE": ""
 }
