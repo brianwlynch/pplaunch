@@ -7,11 +7,11 @@ The panel will open, then every five seconds it will try to connect to the TFC s
 **DISCLAIMER** - This is not an official TFC Product. If something does not work **DO NOT** contact TFC Support, they will not be able to help you!
 
 ## First launch
-Upon first launch, the TFC Instance will no be set. Open the settings page (with the gear) and set your instance.
+Upon first launch, the TFC Instance will not be set. Open the settings page (with the gear) and set your instance.
 
 ## Debug mode
 In the settings menu you can enable debug mode. Debug mode is checked to see if it is enabled every five seconds. Developer tools will open!
-The panel will continute to operate as normally. Use the `console` tab in dev tools to see some logs. If the panel does connect to TFC, it **will not** redirect you until you disable debug mode. 
+The panel will continue to operate as normally. Use the `console` tab in dev tools to see some logs. If the panel does connect to TFC, it **will not** redirect you until you disable debug mode. 
 
 ## Changelog
 
@@ -19,6 +19,7 @@ The panel will continute to operate as normally. Use the `console` tab in dev to
 - Goes back to wait screen if connection to TFC is lost for 45 seconds.
 - Added auto update features.
   - ** These panels often don't get internet access so we will need a way to alert for updates outside the app as well.
+- Updated settings page to allow redirect to new ui.
 
 ### v3.1.2 - **Latest**
 - Prevented App from launching twice
