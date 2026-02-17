@@ -76,19 +76,24 @@ body {
 .settings_icon {
     filter: invert(1);
     padding: 5px;
+    z-index: 1;
 }
 .help_icon {
     filter: invert(1);
     padding: 5px;
+    z-index: 1;
 }
 .alert_icon {
     filter: invert(1);
     padding: 5px;
     visibility: hidden;
+    z-index: 1;
 }
 .cloud_icon {
     filter: invert(1);
     padding: 5px;
+    z-index: 1;
+    visibility: hidden;
 }
 
 /* Generic visibility helpers used by JS */
@@ -240,4 +245,67 @@ body {
     font-family: RobotoThin;
     color: #f0f0ff;
     text-align: center;
+}
+
+#snackbar {
+    visibility: hidden;
+    min-width: 250px;
+    margin-left: -125px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 5px;
+    padding: 16px;
+    position: fixed;
+    z-index: 2;
+    top: 50px;
+    right: 10px;
+
+    overflow: hidden;
+}
+#snackbar.show{
+    visibility: visible;
+    -webkit-animation: fadein 1s, fadeout 1s 9.5s;
+    animation: fadein 1s, fadeout 1s 9.5s;
+}
+
+@-webkit-keyframes fadein {
+    from {right: 0; opacity: 0;}
+    to {right: 10px; opacity: 1;}
+}
+
+@keyframes fadein {
+    from {right: 0; opacity: 0;}
+    to {right: 10px; opacity: 1;}
+}
+
+@-webkit-keyframes fadeout {
+    from {right: 10px; opacity: 1;}
+    to {right: 0; opacity: 0;}
+}
+
+@keyframes fadeout {
+    from {right: 10px; opacity: 1;}
+    to {right: 0; opacity: 0;}
+}
+
+#snackbar-timer {
+    height: 10px;
+    background-color: white;
+    position: absolute;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    display: block;
+    transform-origin: left center;
+    transform: scaleX(1);
+}
+
+#snackbar.show #snackbar-timer {
+    animation: progress-deplete 9.5s linear forwards;
+}
+
+@keyframes progress-deplete {
+    from {width: 250px;}
+    to {width: 0px;}
 }

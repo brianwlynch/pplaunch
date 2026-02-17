@@ -15,11 +15,13 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 
 ## Changelog
 
-### v3.1.3
+### v3.2.0
 - Goes back to wait screen if connection to TFC is lost for 45 seconds.
 - Added auto update features.
   - ** These panels often don't get internet access so we will need a way to alert for updates outside the app as well.
 - Updated settings page to allow redirect to new ui.
+- Made snack bars for errors so you don't need to open debug mode.
+- ~ReStructured project files~
 
 ### v3.1.2 - **Latest**
 - Prevented App from launching twice

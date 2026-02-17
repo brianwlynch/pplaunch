@@ -81,8 +81,10 @@
         async function checkServer() {
             loadSettings();
             if (!TFC_INSTANCE || TFC_INSTANCE == "none") {
-                console.warn("TFC_INSTANCE not set. Please check your settings!");
-                alertIcon.style.visibility = "visible";  
+                msg = "TFC_INSTANCE not set. Please check your settings!";
+                console.warn(msg);
+                alertIcon.addEventListener("click", () => snackBar(msg));
+                alertIcon.style.visibility = "visible";
                 loadSettings();
                 return;
             } else {
@@ -90,7 +92,9 @@
             }
 
             if (!CUSTOM_INSTANCE && REDIRECT_MODE == "custom") {
-                console.warn("CUSTOM_URL not set. Please check your settings!");
+                msg = "CUSTOM_URL not set. Please check your settings!";
+                console.warn(msg);
+                alertIcon.addEventListener("click", () => snackBar(msg));
                 alertIcon.style.visibility = "visible";  
                 loadSettings();
                 return;
@@ -180,31 +184,39 @@
             switch(message){
                 case "Looking for updates":
                     icon.src = "assets/images/cloud-search.svg";
+                    icon.addEventListener("click", () => snackBar("Looking for an update."));
                     break;
                 case "Update available.":
                     icon.src = "assets/images/cloud-download.svg";
+                    icon.addEventListener("click", () => snackBar("Downloading new update."));
                     break;
                 case "Update not available.":
                     icon.style.visibility = "hidden";
                     break;
                 case "Update downloaded.":
                     icon.src = "assets/images/cloud-check.svg";
+                    icon.addEventListener("click", () => snackBar("Update downloaded. Will be installed when panel closes."));
                     break;
             }
         }
+    
+        function snackBar(message) {
+            bar = document.getElementById("snackbar");
+            barMessage = document.getElementById("snackbar-message");
+            barMessage.innerHTML = message;
+            bar.className = "show";
 
-        // ipcRenderer.on('settings-updated', () => {
-        //     loadSettings();
-        //     console.log("Loading Settings");
-        // });
+            setTimeout(function(){bar.className = bar.className.replace("show", "");}, 10000);
+        }
+
     </script>
 </head>
 
 <body>
-    <img id="debug_icon" src="assets/images/debug.svg" class="debug_icon"/>
+    <img id="debug_icon" onclick="snackBar('You are in debug mode!')" src="assets/images/debug.svg" class="debug_icon"/>
     <table style="position: absolute; right: 0; top: 0;">
         <td>
-            <img id="cloud_icon" src="assets/images/cloud-question.svg" class="cloud_icon"/>
+            <img id="cloud_icon" onclick="snackBar('Looking for an update')" src="assets/images/cloud-question.svg" class="cloud_icon"/>
         </td>
         <td>
             <img id="alert_icon" src="assets/images/alert.svg" class="alert_icon"/>
@@ -237,6 +249,12 @@
             <p>Swipe to move left and right. Tap the screen to shoot.</p>
         </div> -->
     </div>
+
+    <div id="snackbar">
+        <p id="snackbar-message">AN ERROR :(</p>
+        <div id="snackbar-timer"></div>
+    </div>
+
     <div class="footer">
         <img src="assets/images/volume-off.svg"
             onclick="toggleSFXMute()"
@@ -246,7 +264,7 @@
             onclick="toggleMusicMute()"
             id="musicIcon"
             class="sound-controls"/>
-        <p id="footer">PPLaunch v3.1.2 &nbsp; | &nbsp; February 16, 2026</p>
+        <p id="footer">PPLaunch v3.1.3 &nbsp; | &nbsp; February 16, 2026</p>
     </div>
 </body>
 
