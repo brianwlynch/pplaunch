@@ -32,6 +32,10 @@ async function loadSettings(){
     //CUSTOM URL
     console.log("CUSTOM:", settings.CUSTOM_INSTANCE)
     document.getElementById('customInstance').value = settings.CUSTOM_INSTANCE || '';
+    
+    //LOADING STRING
+    console.log("LOADING:", settings.LOADING_STRING)
+    document.getElementById('loadingString').value = settings.LOADING_STRING || '';
 
 };
 
@@ -45,6 +49,7 @@ async function saveSettings() {
         REDIRECT_MODE: document.getElementById('redirectMode').value,
         URL_PREFIX: document.getElementById('urlPrefix').value,
         BASE_URL: document.getElementById("baseURLDropdown").value,
+        LOADING_STRING: document.getElementById("loadingString").value,
     });
     window.settingsAPI.onChanged();
 
@@ -52,3 +57,26 @@ async function saveSettings() {
 }
 
 window.addEventListener("DOMContentLoaded", loadSettings);
+
+const select = document.getElementById("redirectMode");
+const tfcInstanceTable = document.getElementById("tfcInstanceTable");
+const customDiv = document.getElementById("customDiv");
+
+const optionsConfig = {
+    tfc: {
+    show: ["tfcInstanceTable"],
+    hide: ["customDiv"]
+    },
+    custom: {
+    show: ["customDiv"],
+    hide: ["tfcInstanceTable"]
+    },
+}
+
+select.addEventListener("change", () => {
+    const config = optionsConfig[select.value];
+    
+    config.show.forEach(id => document.getElementById(id).style.display = "block");
+    config.hide.forEach(id => document.getElementById(id).style.display = "none");
+
+});

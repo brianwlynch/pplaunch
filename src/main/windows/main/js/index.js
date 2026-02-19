@@ -4,6 +4,7 @@ var TARGET_URL = null;
 var BASE_URL = null;
 var CUSTOM_INSTANCE = null;
 var REDIRECT_MODE = null;
+let previousRedirectMode = null; // To avoid constantly updating the messages array
 
 var FirstRun = true;
 let debugIcon;
@@ -12,14 +13,16 @@ let clockIcon;
 let startTime;
 let settings;
 
-window.onload = () => {
+
+window.addEventListener("DOMContentLoaded", async () => {
     debugIcon = document.getElementById("td_debug");
     alertIcon = document.getElementById("td_alert");
     clockIcon = document.getElementById("td_clock");
+    title = document.getElementById("title");
+    title_2 = document.getElementById("title_2");
 
     startTime = new Date();
-    console.log("Panel opened at:", startTime);
-
+    
     document.getElementById('settings_icon').addEventListener('click', () => {
         window.appAPI.openSettings();
         if (DEBUG || true) {
@@ -32,9 +35,7 @@ window.onload = () => {
             console.log("Help icon clicked, opening help window.");
         }
     });
-};
 
-window.addEventListener("DOMContentLoaded", async () => {
     settings = await window.settingsAPI.load();
     loadSettings(settings);
     setInterval(checkServer, 5000);
@@ -60,6 +61,11 @@ function loadSettings(settings) {
         if(debugIcon) debugIcon.style.display = DEBUG ? "table-cell" : "none";
 
         REDIRECT_MODE = settings.REDIRECT_MODE || "tfc";
+        if(REDIRECT_MODE !== previousRedirectMode){
+            initializeMessages(REDIRECT_MODE);
+            previousRedirectMode = REDIRECT_MODE;
+        }
+
         CUSTOM_INSTANCE = settings.CUSTOM_INSTANCE || "";
         
         if (settings.BASE_URL == "nep"){
@@ -69,6 +75,14 @@ function loadSettings(settings) {
         }
 
         URL_PREFIX = settings.URL_PREFIX || "";
+        
+        if(REDIRECT_MODE === "custom"){
+            if(title) title.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} Is Launching` : "TFC Is Launching";
+            if(title_2) title_2.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} is ready` : "TFC is ready";
+        } else {
+            if(title) title.innerHTML = "TFC Is Launching";
+            if(title_2) title_2.innerHTML = "TFC is ready";
+        }
     }
 }
 
@@ -99,9 +113,6 @@ async function checkServer() {
     switch(REDIRECT_MODE) {
         case "tfc":
             TARGET_URL = "https://" + URL_PREFIX + "." + TFC_INSTANCE + BASE_URL + "/production/pool/panel";
-            break;
-        case "demo":
-            TARGET_URL = "https://nepgroup.com";
             break;
         case "custom":
             TARGET_URL = CUSTOM_INSTANCE;

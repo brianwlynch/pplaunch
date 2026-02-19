@@ -90,6 +90,4 @@ typings/
 
 # Outputs
 out/
-dist/
-dist/builder-debug.yml
-dist/builder-effective-config.yaml
+/dist/

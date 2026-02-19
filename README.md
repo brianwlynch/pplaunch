@@ -24,6 +24,8 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 - Made snack bars for errors so you don't need to open debug mode.
 - Added a clock icon to see why the panel didn't redirect AFTER 10 minutes.
 - Converted old `index.js` to become `main.js` took alot of the file and split it into multiple smaller ones.
+- Removed Demo mode
+- Added ability to change "TFC Is Launching" to a custom string, when in that mode.
 
 ### v3.1.2 - **Latest**
 - Prevented App from launching twice

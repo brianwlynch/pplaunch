@@ -3,71 +3,7 @@
 <head>
     <meta charset="UTF-8" />
     <title>Settings</title>
-    <style>
-        html, body {
-        display: flex;
-        height: 100vh;
-        align-items: center;
-        justify-content: center;
-        font-family: sans-serif;
-        background: rgb(200, 200, 200)
-        }
-
-        .container {
-        background: rgba(0,0,0,0);
-        padding: 2rem;
-        text-align: center;
-        }
-
-        h2 {
-        margin-bottom: 1.5rem;
-        }
-
-        .form-group {
-        margin-bottom: 1.2rem;
-        }
-
-        .tfc-wrapper {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        }
-
-        .tfc-wrapper span,
-        .tfc-wrapper input {
-        font-size: 1rem;
-        }
-
-        input[type="text"] {
-        width: 100px;
-        text-align: center;
-        padding: 0.25rem;
-        margin: 0 0.5rem;
-        }
-
-        label {
-        font-weight: 500;
-        }
-
-        button {
-        padding: 0.5rem 1rem;
-        font-size: 1rem;
-        border: none;
-        border-radius: 4px;
-        background-color: #007bff;
-        color: white;
-        cursor: pointer;
-        }
-
-        button:hover {
-        background-color: #0056b3;
-        }
-
-        /* Only for dev, not in production */
-        /* table, th, td {
-          border: 1px solid black;
-        } */
-    </style>
+    <link rel="stylesheet" href="./settings.css">
     <script src="./settings.js" defer></script>
 </head>
 <body>
@@ -90,7 +26,6 @@
               line-height: 50px;
               text-align: center;">
       <option value="tfc">TFC</option>
-      <option value="demo">Demo Mode</option>
       <option value="custom">Custom URL</option>
     </select><hr>
 
@@ -164,46 +99,35 @@
     
     <div class="form-group" id="customDiv" style="display: none; margin: 8px;">
       <label for="customInstance"><b><u>Custom URL:</u></b></label><br>
-      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/>
-    </div>
+      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/><br><br>
+      
+      <label for="loadingString"><b><u>Loading Prefix</u></b></label>
+      
+      <table style="margin: auto;">
+        <td>
+          <input
+            type="text"
+            id="loadingString"
+            placeholder="TFC"
+            style="width: 148px;
+                    height: 40px;
+                    text-align: center;
+                    padding: 0;
+                    margin: 0;
+                    "/>
+        </td>
+        <td style="vertical-align:middle">
+          <H5>
+            Is Launching
+          </H5>
+        </td>
+      </table>
 
-    <div class="form-group" id="demoDiv" style="display: none; margin: 8px;">
-      <label for="demo"><b><u>Demo Mode:</u></b></label><br>
-      <span id="demo">The panel will redirect to https://nepgroup.com</span>
     </div>
 
     <button onclick="saveSettings()">Save and Close</button>
   </div>
-  
-  <script>
-    const select = document.getElementById("redirectMode");
-    const demoDiv = document.getElementById("demoDiv");
-    const tfcInstanceTable = document.getElementById("tfcInstanceTable");
-    const customDiv = document.getElementById("customDiv");
 
-    const optionsConfig = {
-      tfc: {
-        show: ["tfcInstanceTable"],
-        hide: ["demoDiv", "customDiv"]
-      },
-      demo: {
-        show: ["demoDiv"],
-        hide: ["tfcInstanceTable", "customDiv"]
-      },
-      custom: {
-        show: ["customDiv"],
-        hide: ["demoDiv", "tfcInstanceTable"]
-      },
-    }
 
-    select.addEventListener("change", () => {
-      const config = optionsConfig[select.value];
-      
-      config.show.forEach(id => document.getElementById(id).style.display = "block");
-      config.hide.forEach(id => document.getElementById(id).style.display = "none");
-
-    });
-
-  </script>
 </body>
 </html>
