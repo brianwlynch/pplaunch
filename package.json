@@ -3,7 +3,7 @@
   "productName": "TFC Public Panel Launcher",
   "version": "3.2.0",
   "description": "Loading screen for TFC Touchscreens",
-  "main": "src/index.js",
+  "main": "src/main/main.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
@@ -44,13 +44,13 @@
     "productName": "TFC Public Panel Launcher",
     "win": {
       "target": "nsis",
-      "icon": "src/assets/images/icon.ico"
+      "icon": "src/main/windows/assets/images/icon.ico"
     },
     "nsis": {
       "oneClick": false,
       "allowElevation": true,
-      "installerIcon": "src/assets/images/icon.ico",
-      "uninstallerIcon": "src/assets/images/icon.ico",
+      "installerIcon": "src/main/windows/assets/images/icon.ico",
+      "uninstallerIcon": "src/main/windows/assets/images/icon.ico",
       "uninstallDisplayName": "TFC Public Panel Launcher",
       "license": "license.md",
       "allowToChangeInstallationDirectory": false
@@ -59,7 +59,7 @@
       "target": [
         "deb"
       ],
-      "icon": "src/assets/images/icon.png",
+      "icon": "src/main/windows/assets/images/icon.png",
       "category": "Utility",
       "maintainer": "NEP Group, Brian Lynch",
       "description": "Loading screen for TFC Touchscreens",

@@ -5,19 +5,19 @@ appId: TFC Public Panel Launcher
 productName: TFC Public Panel Launcher
 win:
   target: nsis
-  icon: src/assets/images/icon.ico
+  icon: src/main/windows/assets/images/icon.ico
 nsis:
   oneClick: false
   allowElevation: true
-  installerIcon: src/assets/images/icon.ico
-  uninstallerIcon: src/assets/images/icon.ico
+  installerIcon: src/main/windows/assets/images/icon.ico
+  uninstallerIcon: src/main/windows/assets/images/icon.ico
   uninstallDisplayName: TFC Public Panel Launcher
   license: license.md
   allowToChangeInstallationDirectory: false
 linux:
   target:
     - deb
-  icon: src/assets/images/icon.png
+  icon: src/main/windows/assets/images/icon.png
   category: Utility
   maintainer: NEP Group, Brian Lynch
   description: Loading screen for TFC Touchscreens

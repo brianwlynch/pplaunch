@@ -238,12 +238,12 @@ WelcomeState.prototype.enter = function(game) {
     // Create and load the sounds.
     game.sounds = new Sounds();
     game.sounds.init();
-    game.sounds.loadSound('slowMusic', 'assets/sounds/slowMusic.wav');
-    game.sounds.loadSound('shoot', 'assets/sounds/shoot.wav');
-    game.sounds.loadSound('bang', 'assets/sounds/bang.wav');
-    game.sounds.loadSound('explosion', 'assets/sounds/explosion.wav');
-    game.sounds.loadSound('music', 'assets/sounds/music.wav');
-    game.sounds.loadSound('fastMusic', 'assets/sounds/fastMusic.wav');
+    game.sounds.loadSound('slowMusic', '../assets/sounds/slowMusic.wav');
+    game.sounds.loadSound('shoot', '../assets/sounds/shoot.wav');
+    game.sounds.loadSound('bang', '../assets/sounds/bang.wav');
+    game.sounds.loadSound('explosion', '../assets/sounds/explosion.wav');
+    game.sounds.loadSound('music', '../assets/sounds/music.wav');
+    game.sounds.loadSound('fastMusic', '../assets/sounds/fastMusic.wav');
 };
 
 WelcomeState.prototype.update = function (game, dt) {
@@ -332,17 +332,15 @@ PlayState.prototype.enter = function(game) {
 
     //  Create the ship.
     this.ship = new Ship(game.width / 2, game.gameBounds.bottom);
-    // this.shipImage = new Image();
-    // this.shipImage.src = 'assets/images/tfcwhite.png';
 
     this.shipImages = {
         threeLives: new Image(),        
         twoLives: new Image(),        
         oneLife: new Image(),        
     };
-    this.shipImages.threeLives.src = 'assets/images/tfcwhite.png';
-    this.shipImages.twoLives.src = 'assets/images/tfwhite.png';
-    this.shipImages.oneLife.src = 'assets/images/fwhite.png';
+    this.shipImages.threeLives.src = '../assets/images/tfcwhite.png';
+    this.shipImages.twoLives.src = '../assets/images/tfwhite.png';
+    this.shipImages.oneLife.src = '../assets/images/fwhite.png';
 
     this.shipImage = this.shipImages.threeLives;
 
@@ -384,7 +382,7 @@ PlayState.prototype.enter = function(game) {
     this.invaderNextVelocity = null;
     
     this.invaderImage = new Image();
-    this.invaderImage.src = 'assets/images/tophat20x20.png';
+    this.invaderImage.src = '../assets/images/tophat20x20.png';
 };
 
 PlayState.prototype.update = function(game, dt) {
@@ -999,7 +997,7 @@ Sounds.prototype.toggleMusicMute = function() {
 
     var musicIcon = document.getElementById('musicIcon');
     if (musicIcon) {
-        musicIcon.src = this.muteMusic ? 'assets/images/music-off.svg' : 'assets/images/music.svg';
+        musicIcon.src = this.muteMusic ? '../assets/images/music-off.svg' : '../assets/images/music.svg';
     }
 }
 
@@ -1009,7 +1007,7 @@ Sounds.prototype.toggleSFXMute = function() {
 
     var sfxIcon = document.getElementById('sfxIcon');
     if (sfxIcon) {
-        sfxIcon.src = this.muteSFX ? 'assets/images/volume-off.svg' : 'assets/images/volume.svg';
+        sfxIcon.src = this.muteSFX ? '../assets/images/volume-off.svg' : '../assets/images/volume.svg';
     }
 }
 

@@ -1,0 +1,46 @@
+const { BrowserWindow, ipcMain } = require("electron");
+
+class WindowManager {
+    windows;
+
+    constructor(){
+        this.windows = {
+            main: null,
+            help: null,
+            settings: null,
+            tfc: null,
+        };
+    }
+
+    open(name, WindowClass, ...args){
+        const existing = this.windows[name];
+        console.log("Managing a window -", name);
+
+        if (existing && existing.window && !existing.window.isDestroyed()){
+            try{
+                if(existing.window.isMinimized()) existing.window.restore();
+                if(!existing.window.isVisible()) existing.window.show();
+                existing.window.focus();
+            } catch {console.log("windowManager existing window error!");}
+            return existing;
+        }
+
+        const instance = new WindowClass(...args);
+        this.windows[name] = instance;
+
+        if (instance.window){
+            instance.window.on("closed", () => {
+                this.windows[name] = null;
+            });
+        }
+        
+        return instance;
+    }
+
+    get(key) {
+        return this.windows[key];
+    }
+
+}
+
+module.exports = WindowManager;

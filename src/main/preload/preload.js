@@ -4,13 +4,26 @@ const path = require('path');
 const { app } = require('@electron/remote');
 const { callbackify } = require('util');
 
-const settingsPath = path.join(app.getPath('userData'), 'settings.json');
 
 contextBridge.exposeInMainWorld('settingsAPI', {
-    save: (data) => fs.writeFileSync(settingsPath, JSON.stringify(data, null, 2)),
-    load: () => fs.existsSync(settingsPath) ? JSON.parse(fs.readFileSync(settingsPath)) : {},
-    notifyUpdate: () => ipcRenderer.send("settings-updated")
+    load: () => ipcRenderer.invoke("settings:load"),
+    save: (data) => ipcRenderer.invoke("settings:save", data),
+
+    onChanged: (cb) => {
+        ipcRenderer.on("settings:changed", (_evt, next) => cb(next));
+    }
 });
+
+contextBridge.exposeInMainWorld("debugAPI", {
+  on: () => ipcRenderer.send("debug-active"),
+  off: () => ipcRenderer.send("debug-inactive"),
+});
+
+contextBridge.exposeInMainWorld("zoomAPI", {
+    get: (origin) => ipcRenderer.invoke("zoom:get", origin),
+    set: (origin, level) => ipcRenderer.invoke("zoom:set", origin, level),
+    reset: (origin) => ipcRenderer.invoke("zoom:reset", origin),
+})
 
 contextBridge.exposeInMainWorld('appAPI', {
     openSettings: () => ipcRenderer.send("open-settings-window"),
