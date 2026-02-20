@@ -36,8 +36,9 @@
     "releaseType": "release"
   },
   "build": {
-    "appId": "TFC Public Panel Launcher",
+    "appId": "com.nepgroup.tfc-public-panel-launcher",
     "productName": "TFC Public Panel Launcher",
+    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis",
       "icon": "src/main/windows/assets/images/icon.ico"
@@ -53,7 +54,7 @@
     },
     "linux": {
       "target": [
-        "deb"
+       	"deb"
       ],
       "icon": "src/main/windows/assets/images/icon.png",
       "category": "Utility",

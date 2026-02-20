@@ -77,11 +77,9 @@ function loadSettings(settings) {
         URL_PREFIX = settings.URL_PREFIX || "";
         
         if(REDIRECT_MODE === "custom"){
-            console.log("if-80");
             if(title) title.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} Is Launching` : "TFC Is Launching";
             if(title_2) title_2.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} is ready` : "TFC is ready";
         } else {
-            console.error("else-84");
             if(title) title.innerHTML = "TFC Is Launching";
             if(title_2) title_2.innerHTML = "TFC is ready";
         }
