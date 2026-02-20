@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Help</title>
+    <style>
+        html, body {
+        display: flex;
+        height: 100vh;
+        align-items: center;
+        justify-content: center;
+        font-family: sans-serif;
+        background: rgb(200, 200, 200)
+        }
+
+        .container {
+        background: rgba(0,0,0,0);
+        padding: 2rem;
+        text-align: center;
+        }
+
+        h2 {
+        margin-bottom: 1.5rem;
+        }
+
+        button {
+        padding: 0.5rem 1rem;
+        font-size: 1rem;
+        border: none;
+        border-radius: 4px;
+        background-color: #007bff;
+        color: white;
+        cursor: pointer;
+        }
+
+        button:hover {
+        background-color: #0056b3;
+        }
+
+        pre {
+        text-align: center;
+        font-family: inherit;
+        white-space: pre-wrap; /* Optional: wrap if lines get too long */
+        }
+
+        /* Only for dev, not in production */
+        table, th, td {
+          border: 1px solid black;
+          border-collapse: collapse;
+          padding: 4px;
+        }
+    </style>
+</head>
+<body>
+  <div class="container">
+    <h2>HELP</h2>
+
+    <p>This is not an Official TFC Product. If something doesn't work please submit an issue on github.</p>
+
+    <img src="../assets/images/qrcode_github.png" style="width: 250px;"><br><br>
+
+    <em><b>DO NOT CONTACT TFC SUPPORT FOR THIS!</b></em>
+    <br><br><hr>
+
+    <h4>Icons:</h4>
+    These are the different icons on the main page. You can tap the icons for more information about why you are seeing them.
+    <table style="margin: 8px auto;">
+      <tr>
+        <th><u>
+          Icon
+        </u></th>
+        <th><u>
+          Reason
+        </u></th>
+      </tr>
+      <tr>
+        <td>
+          <img id="timeout_icon" src="../assets/images/clock-question.svg" class="clock_icon" style="visibility: visible; vertical-align: middle;"/>
+        </td>
+        <td>
+            The panel hasn't loaded in 10 min.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="../assets/images/alert.svg" style="vertical-align: middle;"/>
+        </td>
+        <td>
+            Something with the configuration isn't correct.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img src="../assets/images/cloud.svg"style="vertical-align: middle;"/>
+        </td>
+        <td>
+            All variations of the cloud are about updates.
+            <table style="margin: 2px auto;">
+              <tr>
+                <td>
+                  <img src="../assets/images/cloud-search.svg" style="vertical-align: middle;"/>
+                </td>
+                <td>Trying to look for an update</td>
+              </tr>
+              <tr>
+                <td>
+                  <img src="../assets/images/cloud-download.svg" style="vertical-align: middle;"/>
+                </td>
+                <td>Downloading the new update</td>
+              </tr>
+              <tr>
+                <td>
+                  <img src="../assets/images/cloud-check.svg" style="vertical-align: middle;"/>
+                </td>
+                <td>New update is downloaded and will be installed upon close.</td>
+              </tr>
+            </table>
+            If you never see a cloud, the panel probably can't get to the internet. <br>
+            Make sure to check github for new updates.
+        </td>
+      </tr>
+      <tr>
+        <td>
+          <img id="debug_icon" src="../assets/images/debug.svg" class="debug_icon" style="visibility: visible; vertical-align: middle;"/>
+        </td>
+        <td>
+            Debug mode is active.<br>Everything will operate as normal, but it <u>will not</u> redirect you to TFC.<br>Developer tools will open.
+        </td>
+      </tr>
+    </table>
+
+    <button onclick="window.close()">Close</button>
+  </div>
+</body>
+</html>

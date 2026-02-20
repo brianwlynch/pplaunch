@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/pplaunch.css">
+    <script src="js/index.js" defer></script>
+    <script type="text/javascript" src="js/pplaunch.js" defer></script>
+    <script src="js/starfield.js" defer></script>
+    <script src="js/spaceinvaders.js" defer></script>
+    <script src="js/gamelaunch.js" defer></script>
+    <link rel="icon" href="../assets/images/favicon.ico" type="image/x-icon">
+    <title>Launching | The Fat Controller</title>
+
+</head>
+
+<body>
+    <table style="position: absolute; left: 0; top: 0;">
+        <td id="td_debug" style="display: none;">
+            <img id="debug_icon" onclick="snackBar('You are in debug mode!')" src="../assets/images/debug.svg" class="debug_icon"/>
+        </td>
+        <td id="td_clock" style="display: none;">
+            <img id="clock_icon" src="../assets/images/clock-question.svg" class="clock_icon"/>
+        </td>
+    </table>
+    <table style="position: absolute; right: 0; top: 0;">
+        <td id="td_cloud" style="display: none;">
+            <img id="cloud_icon" onclick="snackBar('Looking for an update')" src="../assets/images/cloud-search.svg" class="cloud_icon"/>
+        </td>
+        <td id="td_alert" style="display: none;">
+            <img id="alert_icon" src="../assets/images/alert.svg" class="alert_icon"/>
+        </td>
+        <td id="td_help">
+            <img id="help_icon" src="../assets/images/help.svg" class="help_icon"/>
+        </td>
+        <td id="td_settings">
+            <img id="settings_icon" src="../assets/images/settings.svg" class="settings_icon"/>
+        </td>
+    </table>
+
+    <div id="main-container" class="container">
+        <div id="title" class="title">TFC Is Launching</div>
+        <div id="message" class="subtitle">This page will automatically refresh when ready.</div>
+    </div>
+    <img id="rocket-img" class="rocket" src="../assets/images/rocket.gif" onclick="launchGame()"></img>
+
+    <div id="redirect" class="redirect" onclick="redirectGame()">
+        <h1 id="title_2" class="title_2">TFC is ready</h1>
+        <h4 class="subtitle_2">Tap me to open!</h4>
+    </div>
+
+    <div id="game-container">
+        <div id="starfield" style="opacity: 0%;"></div>
+        <div id="gamecontainer">
+            <canvas id="gameCanvas"></canvas>
+        </div>
+        <!-- <div id="info">
+            <p>Swipe to move left and right. Tap the screen to shoot.</p>
+        </div> -->
+    </div>
+
+    <div id="snackbar">
+        <p id="snackbar-message">AN ERROR :(</p>
+        <div id="snackbar-timer"></div>
+    </div>
+
+    <div class="footer">
+        <img src="../assets/images/volume-off.svg"
+            onclick="toggleSFXMute()"
+            id="sfxIcon"
+            class="sound-controls"/>
+        <img src="../assets/images/music-off.svg"
+            onclick="toggleMusicMute()"
+            id="musicIcon"
+            class="sound-controls"/>
+        <p id="footer">PPLaunch v3.2.0 &nbsp; | &nbsp; February 19, 2026</p>
+    </div>
+</body>
+
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8" />
+    <title>Settings</title>
+    <link rel="stylesheet" href="./settings.css">
+    <script src="./settings.js" defer></script>
+</head>
+<body>
+  <div class="container">
+    <h2>Settings</h2>
+
+    <div class="form-group">
+      <label>
+        <input type="checkbox" id="debugMode" />
+        Debug Mode
+      </label>
+    </div>
+
+    <p for="redirectMode"><b><u>Redirect Mode</u></b></p>
+    <select
+      name="redirectMode"
+      id="redirectMode"
+      style="width: 150px;
+              height: 50px;
+              line-height: 50px;
+              text-align: center;">
+      <option value="tfc">TFC</option>
+      <option value="custom">Custom URL</option>
+    </select><hr>
+
+    <table id="tfcInstanceTable"  style="margin: 8px;">
+      <tr>
+        <th colspan="6"><u>
+          TFC Instance
+        </u></th>
+      </tr>
+      
+      <tr>
+        <td style="vertical-align:middle">
+          <H4>
+            HTTPS://
+          </H4>
+        </td>
+
+        <td>
+          <select
+            name="urlPrefix"
+            id="urlPrefix"
+            style="width: 150px;
+                    height: 50px;
+                    line-height: 50px;
+                    text-align: center;">
+            <option value="control">CONTROL</option>
+            <option value="next">NEXT</option>
+          </select>
+        </td>
+
+        <td style="vertical-align:middle;">
+          <h4>
+            .
+          </h4>
+        </td>
+
+        <td>
+          <input
+            type="text"
+            id="tfcInstance"
+            placeholder="TFC"
+            style="width: 148px;
+                    height: 48px;
+                    text-align: center;
+                    padding: 0;
+                    margin: 0;
+                    "/>
+        </td>
+
+        <td>
+          <h4>
+            .
+          </h4>
+        </td>
+
+        <td>
+          <select
+            name="baseURLDropdown"
+            id="baseURLDropdown"
+            style="width: 150px;
+                    height: 50px;
+                    line-height: 50px;
+                    text-align: center;">
+            <option value="nep">.NEPGroup.io</option>
+            <option value="tfc">.TFCLabs.com</option>
+          </select>
+        </td>
+      </tr>
+
+    </table>
+    
+    <div class="form-group" id="customDiv" style="display: none; margin: 8px;">
+      <label for="customInstance"><b><u>Custom URL:</u></b></label><br>
+      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/><br><br>
+      
+      <label for="loadingString"><b><u>Loading Prefix</u></b></label>
+      
+      <table style="margin: auto;">
+        <td>
+          <input
+            type="text"
+            id="loadingString"
+            placeholder="TFC"
+            style="width: 148px;
+                    height: 40px;
+                    text-align: center;
+                    padding: 0;
+                    margin: 0;
+                    "/>
+        </td>
+        <td style="vertical-align:middle">
+          <H5>
+            Is Launching
+          </H5>
+        </td>
+      </table>
+
+    </div>
+
+    <button onclick="saveSettings()">Save and Close</button>
+  </div>
+
+
+</body>
+</html>

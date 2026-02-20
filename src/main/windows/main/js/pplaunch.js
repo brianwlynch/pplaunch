@@ -1,7 +1,11 @@
 const SLOW_LOAD_MS = 3e4,
       TRANSITION_DURATION = 1e4,
-      messageEl = document.getElementById("message"),
-      messages = [
+      messageEl = document.getElementById("message");
+
+let messages = [];
+      
+function initializeMessages(redirectMode){
+    const allMessages = [
         "Waiting for TFC servers to come online.",
         "Hang tight, the panel will launch automatically.",
         "The panel will start once the TFC servers come online.",
@@ -17,7 +21,17 @@ const SLOW_LOAD_MS = 3e4,
         "Patience is not the ability to wait, but how we act while waiting.",
         "The servers may be loading, but so is greatness!",
         "We are still cranking open the expando, be patient.",
-      ];
+    ];
+
+    if (redirectMode === "custom"){
+        messages = allMessages.filter(msg =>
+            !msg.toLocaleLowerCase().includes("tfc") &&
+            !msg.toLocaleLowerCase().includes("expando")
+        );
+    } else {
+        messages = allMessages;
+    }
+}
 
 function message(e) {
     setTimeout(() => {
@@ -41,12 +55,12 @@ function doShennanigans() {
     easterEgg = Math.random()
 
     if (.03 <= easterEgg && easterEgg <= .04) {
-        rocket.src = "assets/images/truck_1.png";
+        rocket.src = "../assets/images/truck_1.png";
         rocket.style.height = "200px";
         rocket.style.mixBlendMode = "normal";
     }
     else if (easterEgg <= .02) {
-        rocket.src = "assets/images/picklerick.gif";
+        rocket.src = "../assets/images/picklerick.gif";
     }
 }
 

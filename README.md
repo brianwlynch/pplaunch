@@ -16,12 +16,17 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 ## Changelog
 
 ### v3.2.0
+- Removed Demo mode
+- ReStructured project files
+  - Converted old `index.js` to become `main.js` took alot of the file and split it into multiple smaller ones.
+- Updated settings page to allow redirect to new ui.
 - Goes back to wait screen if connection to TFC is lost for 45 seconds.
 - Added auto update features.
   - ** These panels often don't get internet access so we will need a way to alert for updates outside the app as well.
-- Updated settings page to allow redirect to new ui.
 - Made snack bars for errors so you don't need to open debug mode.
-- ~ReStructured project files~
+- Added a clock icon to see why the panel didn't redirect AFTER 10 minutes.
+- Added ability to change "TFC Is Launching" to a custom string, when in that mode.
+- Prevent TFC Window from opening if Help or Settings windows are open.
 
 ### v3.1.2 - **Latest**
 - Prevented App from launching twice
