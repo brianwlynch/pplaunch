@@ -15,7 +15,7 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 
 ## Changelog
 
-### v3.2.0
+### v3.2.0 - **Latest**
 - Removed Demo mode
 - ReStructured project files
   - Converted old `index.js` to become `main.js` took alot of the file and split it into multiple smaller ones.
@@ -28,7 +28,7 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 - Added ability to change "TFC Is Launching" to a custom string, when in that mode.
 - Prevent TFC Window from opening if Help or Settings windows are open.
 
-### v3.1.2 - **Latest**
+### v3.1.2
 - Prevented App from launching twice
 - Changed contact info to QR for Github issues page
 
