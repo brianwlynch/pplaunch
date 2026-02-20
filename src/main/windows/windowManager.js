@@ -37,6 +37,19 @@ class WindowManager {
         return instance;
     }
 
+    close(name){
+        const entry = this.get(name);
+        const win = entry?.window ?? entry;
+        if(!win || win.isDestroyed()) return;
+        win.close();
+    }
+
+    isClosed(name){
+        const entry = this.get(name);
+        const win = entry?.window ?? entry;
+        return !win || win.isDestroyed();
+    }
+
     get(key) {
         return this.windows[key];
     }

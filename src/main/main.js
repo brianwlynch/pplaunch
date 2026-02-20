@@ -124,6 +124,10 @@ function createSettingsWindow(){
 }
 function createTfcWindow(target_url){
   console.log("Attempting... createTFCWindow");
+  
+  if(!wm.isClosed("settings") || !wm.isClosed("help")) return;
+  wm.close("main");
+  
   return wm.open("tfc", TFCWindow, target_url, {
     onFailHard: (info) => {
       console.warn("TFC keepAlive failed hard:", info);

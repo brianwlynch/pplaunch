@@ -77,9 +77,11 @@ function loadSettings(settings) {
         URL_PREFIX = settings.URL_PREFIX || "";
         
         if(REDIRECT_MODE === "custom"){
+            console.log("if-80");
             if(title) title.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} Is Launching` : "TFC Is Launching";
             if(title_2) title_2.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} is ready` : "TFC is ready";
         } else {
+            console.error("else-84");
             if(title) title.innerHTML = "TFC Is Launching";
             if(title_2) title_2.innerHTML = "TFC is ready";
         }
@@ -163,7 +165,6 @@ function redirect(){
     } else {
         if (!redirected){
             window.appAPI.openTFC(TARGET_URL);
-            window.close();
         } else {
             console.warn("Already redirected!")
         }
@@ -188,30 +189,34 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 
 function updateMessage(event, message){
-    console.log("New Update Message:", message);
     let icon = document.getElementById("cloud_icon");
     let td = document.getElementById("td-cloud");
 
     icon.onclick = null;
 
     if (message.includes("Error")) {
+        console.error(message);
         td.style.display = "none";
         return;
     }
 
     switch(message){
         case "Looking for updates":
+            console.log(message);
             icon.src = "../assets/images/cloud-search.svg";
             icon.onclick = () => snackBar("Looking for an update.");
             break;
-        case "Update available.":
+            case "Update available.":
+            console.log(message);
             icon.src = "../assets/images/cloud-download.svg";
             icon.onclick = () => snackBar("Downloading new update.");
             break;
-        case "Update not available.":
+            case "Update not available.":
+            console.log(message);
             td.style.display = "none";
             break;
-        case "Update downloaded.":
+            case "Update downloaded.":
+            console.log(message);
             icon.src = "../assets/images/cloud-check.svg";
             icon.onclick = () => snackBar("Update downloaded. Will be installed when panel closes.");
             break;
