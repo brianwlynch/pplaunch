@@ -57,7 +57,6 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 - Initial launcher built by Dennis
 
 ## Future Changes
-- [x] *Option for other types of TFC instances that use different url patterns* - Implemented in `v3.1.1`
 - [ ] High score list for shenanigans
-- [ ] Remove TFC messages when using custom URL
-- [ ] Make "TFC is Loading" sentence editable when using custom URL.
+- [x] Remove TFC messages when using custom URL Implemented in `v3.2.0`
+- [x] Make "TFC is Loading" sentence editable when using custom URL. - Implemented in `v3.2.0`
