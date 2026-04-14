@@ -58,5 +58,12 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 
 ## Future Changes
 - [ ] High score list for shenanigans
-- [x] Remove TFC messages when using custom URL Implemented in `v3.2.0`
-- [x] Make "TFC is Loading" sentence editable when using custom URL. - Implemented in `v3.2.0`
+
+---
+<a href="https://www.star-history.com/?repos=brianwlynch%2Fpplaunch&type=date&logscale=&legend=top-left">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&logscale&legend=top-left" />
+ </picture>
+</a>
