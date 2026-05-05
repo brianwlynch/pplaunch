@@ -26,31 +26,38 @@ window.addEventListener("DOMContentLoaded", async () => {
     document.getElementById('settings_icon').addEventListener('click', () => {
         window.appAPI.openSettings();
         if (DEBUG || true) {
-            console.log("Settings icon clicked, opening settings window.");
+            console.log(`[Index] ${new Date().toISOString()} - Settings icon clicked, opening settings window.`);
         }
     });
     document.getElementById('help_icon').addEventListener('click', () => {
         window.appAPI.openHelp();
         if (DEBUG || true) {
-            console.log("Help icon clicked, opening help window.");
+            console.log(`[Index] ${new Date().toISOString()} - Help icon clicked, opening help window.`);
+        }
+    });
+    document.getElementById('gameSettingsIcon').addEventListener('click', () => {
+        window.appAPI.openGameSettings();
+        if (DEBUG || true) {
+            console.log(`[Index] ${new Date().toISOString()} - Game Settings icon clicked, opening settings window.`);
         }
     });
 
     settings = await window.settingsAPI.load();
     loadSettings(settings);
+    
     setInterval(checkServer, 5000);
 })
 
 function loadSettings(settings) {
     
     if (Object.keys(settings).length === 0) {
-        console.warn('No settings file found.');
+        console.warn(`[Index] ${new Date().toISOString()} - No settings file found.`);
     } else {
         DEBUG = !!settings.DEBUG;
         TFC_INSTANCE = settings.TFC_INSTANCE || '';
         
         if(DEBUG || FirstRun){
-            console.log(settings);
+            console.log(`[Index] ${new Date().toISOString()} - `, settings);
         }
         FirstRun = false;
 
@@ -87,10 +94,13 @@ function loadSettings(settings) {
 }
 
 async function checkServer() {
-    loadSettings(await window.settingsAPI.load());
+    settings = await window.settingsAPI.load();
+    
+    loadSettings(settings);
+    
     if ((!TFC_INSTANCE || TFC_INSTANCE == "none") && REDIRECT_MODE == "tfc") {
         msg = "TFC_INSTANCE not set. Please check your settings!";
-        console.warn(msg);
+        console.warn(`[Index] ${new Date().toISOString()} -`, msg);
         alertIcon.addEventListener("click", () => snackBar(msg));
         alertIcon.style.display = "table-cell";
         loadSettings();
@@ -101,7 +111,7 @@ async function checkServer() {
 
     if (!CUSTOM_INSTANCE && REDIRECT_MODE == "custom") {
         msg = "CUSTOM_URL not set. Please check your settings!";
-        console.warn(msg);
+        console.warn(`[Index] ${new Date().toISOString()} - `, msg);
         alertIcon.addEventListener("click", () => snackBar(msg));
         alertIcon.style.display = "table-cell";  
         loadSettings();
@@ -122,19 +132,19 @@ async function checkServer() {
     }
 
     try {
-        console.info("Checking TFC at:", TARGET_URL);
+        console.info(`[Index] ${new Date().toISOString()} - Checking TFC at:`, TARGET_URL);
         const response = await fetch(TARGET_URL, { method: "GET"});
         const text = await response.text();
         
         if (response.status === 404 || (response.status === 200 && text.includes("404"))){
-                console.error("Failed to fetch! - 404 Not Found")
+                console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 404 Not Found`)
                 return;
         } else {
             redirect()
         }
 
     } catch (e) {
-        console.warn("Server likely not up yet:", e.message);
+        console.warn(`[Index] ${new Date().toISOString()} - Server likely not up yet:`, e.message);
         clockIcon.addEventListener("click", () => snackBar('Server likely not up yet: <b><i>"' + e.message + '"</i></b><br>Debug mode will tell you more!'));
     }
 
@@ -142,9 +152,7 @@ async function checkServer() {
     waitTime = 10 //Minutes
     if( curTime >= waitTime){
         clockIcon.style.display = "table-cell";
-        //console.log("Why is it taking so long to load??");
     } else {
-        //console.log("Not Yet, Be Patient -", curTime);
         clockIcon.style.display = "none";    
     }
 
@@ -153,7 +161,7 @@ async function checkServer() {
 let redirected = false;
 function redirect(){
     if (DEBUG){
-        console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
+        console.warn(`[Index] ${new Date().toISOString()} - Connection to TFC is ok! Won't redirect due to debug mode!`);
         return;
     }
     
@@ -164,20 +172,20 @@ function redirect(){
         if (!redirected){
             window.appAPI.openTFC(TARGET_URL);
         } else {
-            console.warn("Already redirected!")
+            console.warn(`[Index] ${new Date().toISOString()} - Already redirected!`)
         }
     }
 }
 function redirectGame(){
     if (DEBUG){
-        console.warn("Connection to TFC is ok! Won't redirect due to debug mode!");
+        console.warn(`[Index] ${new Date().toISOString()} - Connection to TFC is ok! Won't redirect due to debug mode!`);
         return;
     } else {
         if (!redirected){
             window.appAPI.openTFC(TARGET_URL);
             window.close();
         } else {
-            console.warn("Already redirected!")
+            console.warn(`[Index] ${new Date().toISOString()} - Already redirected!`);
         }
     }
 }
@@ -193,28 +201,28 @@ function updateMessage(event, message){
     icon.onclick = null;
 
     if (message.includes("Error")) {
-        console.error(message);
+        console.error(`[Index] ${new Date().toISOString()} - `, message);
         td.style.display = "none";
         return;
     }
 
     switch(message){
         case "Looking for updates":
-            console.log(message);
+            console.log(`[Index] ${new Date().toISOString()} - `, message);
             icon.src = "../assets/images/cloud-search.svg";
             icon.onclick = () => snackBar("Looking for an update.");
             break;
             case "Update available.":
-            console.log(message);
+            console.log(`[Index] ${new Date().toISOString()} - `, message);
             icon.src = "../assets/images/cloud-download.svg";
             icon.onclick = () => snackBar("Downloading new update.");
             break;
             case "Update not available.":
-            console.log(message);
+            console.log(`[Index] ${new Date().toISOString()} - `, message);
             td.style.display = "none";
             break;
             case "Update downloaded.":
-            console.log(message);
+            console.log(`[Index] ${new Date().toISOString()} - `, message);
             icon.src = "../assets/images/cloud-check.svg";
             icon.onclick = () => snackBar("Update downloaded. Will be installed when panel closes.");
             break;

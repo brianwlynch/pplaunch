@@ -28,9 +28,26 @@ contextBridge.exposeInMainWorld("zoomAPI", {
 contextBridge.exposeInMainWorld('appAPI', {
     openSettings: () => ipcRenderer.send("open-settings-window"),
     openHelp: () => ipcRenderer.send("open-help-window"),
+    openGameSettings: () => ipcRenderer.send("open-game-settings-window"),
     openTFC: (url) => ipcRenderer.send("open-tfc-window", url),
     debugActive: () => ipcRenderer.send("debug-active"),
 });
+
+contextBridge.exposeInMainWorld("sharingAPI", {
+    peers: () => ipcRenderer.invoke("sharing:peers"),
+    start: () => ipcRenderer.invoke("sharing:start"),
+    stop: () => ipcRenderer.invoke("sharing:stop"),
+    onPeerFound: (cb) => ipcRenderer.on("sharing:peer-found", (_evt, peer) => cb(peer)),
+    onPeerLost: (cb) => ipcRenderer.on("sharing:peer-lost", (_evt, peer) => cb(peer)),
+    pushScores: (scores) => ipcRenderer.invoke("sharing:push-scores", scores),
+    onScoresUpdated: (cb) => ipcRenderer.on("sharing:scores-updated", (_evt, scores) => cb(scores)),
+})
+
+contextBridge.exposeInMainWorld("loggingAPI", {
+    error: (msg, service) => ipcRenderer.send("logging:error", msg, service),
+    warn: (msg, service) => ipcRenderer.send("logging:warn", msg, service),
+    info: (msg, service) => ipcRenderer.send("logging:info", msg, service),
+})
 
 let bridge = {
     updateMessage: (callback) => ipcRenderer.on("updateMessage", callback),

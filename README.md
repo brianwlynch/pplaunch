@@ -15,6 +15,11 @@ The panel will continue to operate as normally. Use the `console` tab in dev too
 
 ## Changelog
 
+### v3.3.0 - **Beta**
+- Added better logging. There is now an `app.log` file in the app directory
+- Added a leaderboard to SpaceInvaders
+  - Local Leaderboard uses mDNS to share scores across panels on the same truck.
+
 ### v3.2.0 - **Latest**
 - Removed Demo mode
 - ReStructured project files

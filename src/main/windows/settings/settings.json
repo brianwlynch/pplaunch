@@ -1,8 +1,12 @@
 {
   "DEBUG": false,
-  "URL_PREFIX": "control",
   "TFC_INSTANCE": "none",
-  "BASE_URL": "nep",
+  "CUSTOM_INSTANCE": "",
   "REDIRECT_MODE": "tfc",
-  "CUSTOM_INSTANCE": ""
+  "URL_PREFIX": "control",
+  "BASE_URL": "nep",
+  "LOADING_STRING": "",
+  "UNIT": "",
+  "LOCATION": "",
+  "CUSTOM_LOCATION": ""
 }

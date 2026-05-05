@@ -6,7 +6,8 @@
 body {
     background-image: url('../../assets/images/camel.svg');
     background-size: cover;
-    overflow: hidden
+    overflow: hidden;
+    height: 100%;
 }
 
 .starfield {
@@ -50,7 +51,7 @@ body {
 
 
 .footer,
-.p{
+.p {
     position: absolute;
     bottom: 0;
     color: #f0f0ff;
@@ -65,7 +66,7 @@ body {
     padding-right: 24px;
 
 }
-  
+
 .sound-controls.shown {
     visibility: visible;
     opacity: 1;
@@ -78,16 +79,19 @@ body {
     padding: 5px;
     z-index: 1;
 }
+
 .help_icon {
     filter: invert(1);
     padding: 5px;
     z-index: 1;
 }
+
 .alert_icon {
     filter: invert(1);
     padding: 5px;
     z-index: 1;
 }
+
 .cloud_icon {
     filter: invert(1);
     padding: 5px;
@@ -96,14 +100,15 @@ body {
 
 /* Generic visibility helpers used by JS */
 .hidden {
-  visibility: hidden;
-  opacity: 0;
-  transition: opacity 200ms ease-in, visibility 0ms ease-in 200ms;
+    visibility: hidden;
+    opacity: 0;
+    transition: opacity 200ms ease-in, visibility 0ms ease-in 200ms;
 }
+
 .shown {
-  visibility: visible;
-  opacity: 1;
-  transition: opacity 200ms ease-out;
+    visibility: visible;
+    opacity: 1;
+    transition: opacity 200ms ease-out;
 }
 
 
@@ -111,13 +116,15 @@ body {
     filter: invert(1);
     padding: 5px;
 }
+
 .clock_icon {
     filter: invert(1);
     padding: 5px;
 }
+
 .redirect {
     padding: 5px 0;
-    height: inherit;
+    height: 125px;
     width: 300px;
     background-color: #525c5f;
     border-radius: 10px;
@@ -261,30 +268,59 @@ body {
 
     overflow: hidden;
 }
-#snackbar.show{
+
+#snackbar.show {
     visibility: visible;
     -webkit-animation: fadein 1s, fadeout 1s 9.5s;
     animation: fadein 1s, fadeout 1s 9.5s;
 }
 
 @-webkit-keyframes fadein {
-    from {right: 0; opacity: 0;}
-    to {right: 10px; opacity: 1;}
+    from {
+        right: 0;
+        opacity: 0;
+    }
+
+    to {
+        right: 10px;
+        opacity: 1;
+    }
 }
 
 @keyframes fadein {
-    from {right: 0; opacity: 0;}
-    to {right: 10px; opacity: 1;}
+    from {
+        right: 0;
+        opacity: 0;
+    }
+
+    to {
+        right: 10px;
+        opacity: 1;
+    }
 }
 
 @-webkit-keyframes fadeout {
-    from {right: 10px; opacity: 1;}
-    to {right: 0; opacity: 0;}
+    from {
+        right: 10px;
+        opacity: 1;
+    }
+
+    to {
+        right: 0;
+        opacity: 0;
+    }
 }
 
 @keyframes fadeout {
-    from {right: 10px; opacity: 1;}
-    to {right: 0; opacity: 0;}
+    from {
+        right: 10px;
+        opacity: 1;
+    }
+
+    to {
+        right: 0;
+        opacity: 0;
+    }
 }
 
 #snackbar-timer {
@@ -304,6 +340,31 @@ body {
 }
 
 @keyframes progress-deplete {
-    from {width: 250px;}
-    to {width: 0px;}
+    from {
+        width: 250px;
+    }
+
+    to {
+        width: 0px;
+    }
+}
+
+table,
+th,
+td {
+    /* border: 1px solid black; */
+    margin: auto;
+    /* padding: 5px; */
+    text-align: center;
+    color: white;
+    font-family: RobotoThin;
+}
+
+tr.local-score td {
+    background-color: yellow;
+    color: black;
+}
+
+#localScoreBody td {
+    text-transform: uppercase;
 }

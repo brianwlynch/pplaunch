@@ -8,15 +8,15 @@ function launchGame() {
 
     //  Setup the canvas.
     var canvas = document.getElementById("gameCanvas");
-    canvas.width =  1200;
+    canvas.width = 1200;
     canvas.height = 800;
-    
+
     //  Create the game.
     game = new Game();
     window.game = game;
-    
-    //  Initialise it with the game canvas.
-    game.initialise(canvas);
+
+    //  Initialize it with the game canvas.
+    game.initialize(canvas);
 
     //  Start the game.
     game.start();
@@ -53,6 +53,9 @@ function launchGame() {
     }, 2500);
     setTimeout(() => {
         document.getElementById('sfxIcon').classList.toggle('shown');
+    }, 2500);
+    setTimeout(() => {
+        document.getElementById('gameSettingsIcon').classList.toggle('shown');
     }, 2500);
 
     inGameMode = true;

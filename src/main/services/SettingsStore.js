@@ -1,6 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const { app } = require("electron");
+const LoggingService = require("./LoggingService");
+const log = new LoggingService("SettingsStore");
+
 
 class SettingsStore{
     constructor() {
@@ -19,11 +22,11 @@ class SettingsStore{
                 fs.copyFileSync(this.defaultSetting, this.userSettingsPath);
             } else {
                 fs.writeFileSync(this.userSettingsPath, JSON.stringify({}, null, 2), "utf-8");
-                console.warn("Default settings.json not fund; creating empty settings.");
-                console.warn("Looked for:", this.defaultSetting);
+                log.warn("Default settings.json not fund; creating empty settings.");
+                log.warn(`Looked for: ${this.defaultSetting}`);
             }
         } catch (err) {
-            console.error("Failed to seed settings:", err);
+            log.error(`Failed to seed settings: ${err}`);
             fs.writeFileSync(this.userSettingsPath, JSON.stringify({}, null, 2), "utf-8");
         }
     }

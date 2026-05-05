@@ -8,55 +8,78 @@ const { autoUpdater, AppUpdater } = require("electron-updater");
 const MainWindow = require("./windows/main/mainWindow");
 const HelpWindow = require("./windows/help/helpWindow");
 const SettingsWindow = require("./windows/settings/settingsWindow");
+const GameSettingsWindow = require("./windows/gameSettings/gameSettingsWindow");
 const TFCWindow = require("./windows/tfc/tfcWindow");
 const WindowManager = require("./windows/windowManager");
 const registerSettingsIpc = require("./ipc/settingsIPC");
 const AutoUpdaterService = require("./services/AutoUpdaterService");
+const LeaderboardSharingService = require("./services/LeaderboardSharingService");
+const registerSharingIpc = require("./ipc/sharingIPC");
+const LoggingService = require("./services/LoggingService");
+const registerLoggingIpc = require('./ipc/loggingIPC');
+const SettingsStore = require("./services/SettingsStore");
 
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
 const wm = new WindowManager();
-const updater = new AutoUpdaterService({windowManager: wm});
+const updater = new AutoUpdaterService({ windowManager: wm });
+const sharing = new LeaderboardSharingService({ windowManager: wm });
+const log = new LoggingService("Main");
+log.info("################ STARTING APP ################");
+
+const settings = new SettingsStore();
+const initialSettings = settings.load();
+let cachedLocation = initialSettings.LOCATION;
+let cachedCustomLocation = initialSettings.CUSTOM_LOCATION;
 
 require('@electron/remote/main').initialize();
 
 //Only allow the app to run once
 const appLocked = app.requestSingleInstanceLock();
-if (!appLocked){
+if (!appLocked) {
   //Another instance is already running
   app.quit()
 }
 
 app.on('second-instance', (event, commandLine, workingDirectory) => {
-  if (mainWindow){
+  mainWindow = wm.get("main");
+  if (mainWindow) {
     try {
       if (mainWindow.isMinimized()) mainWindow.restore();
       if (!mainWindow.isVisible()) mainWindow.show();
       mainWindow.focus();
     } catch (err) {
-      console.error("Error Focusing on main window on second-instance: ", err);
+      log.error(`Error Focusing on main window on second-instance: `, err);
     }
   }
-  if (tfcWindow){
+  tfcWindow = wm.get("tfc");
+  if (tfcWindow) {
     try {
       if (tfcWindow.isMinimized()) tfcWindow.restore();
       if (!tfcWindow.isVisible()) tfcWindow.show();
       tfcWindow.focus();
     } catch (err) {
-      console.error("Error Focusing on TFC window on second-instance: ", err);
+      log.error(`Error Focusing on TFC window on second-instance: `, err);
     }
   }
-  if (settingsWindow){
+  settingsWindow = wm.get("settings");
+  if (settingsWindow) {
     try {
       if (settingsWindow.isMinimized()) settingsWindow.restore();
       if (!settingsWindow.isVisible()) settingsWindow.show();
       settingsWindow.focus();
     } catch (err) {
-      console.error("Error Focusing on Settings window on second-instance: ", err);
+      log.error(`Error Focusing on Settings window on second-instance: `, err);
     }
   }
 });
+
+app.on("before-quit", async (event) => {
+  event.preventDefault();
+  await sharing.stop("Quitting");
+  app.exit(0);
+})
 
 
 // ############################
@@ -78,7 +101,7 @@ if (process.platform === 'linux') {
   const desktopFile = path.join(autoStartDir, 'pplaunch.desktop');
   const iconPath = path.join(__dirname, 'assets', 'images', 'icon.png');
 
-  const contents ='[Desktop Entry]\n' +
+  const contents = '[Desktop Entry]\n' +
     'Type=Application\n' +
     'Name=PPLaunch\n' +
     'Exec=/usr/bin/pplaunch\n' +
@@ -97,9 +120,9 @@ if (process.platform === 'linux') {
   if (!fs.existsSync(desktopFile)) {
     try {
       fs.writeFileSync(desktopFile, contents);
-      console.log('Autostart file created successfully.');
+      log.info(`Autostart file created successfully.`);
     } catch (error) {
-      console.error('Error creating autostart file:', error);
+      log.error(`Error creating autostart file:`, error);
     }
   };
 };
@@ -108,29 +131,35 @@ if (process.platform === 'linux') {
 // ### Page Settings  ###
 // ######################
 
-function createMainWindow(){
-  console.log("Attempting... createMainWindow");
+function createMainWindow() {
+  log.info(`Attempting... createMainWindow`);
   return wm.open("main", MainWindow);
 }
-function createHelpWindow(){
-  console.log("Attempting... createHelpWindow");
+function createHelpWindow() {
+  log.info(`Attempting... createHelpWindow`);
   main = wm.get("main");
   return wm.open("help", HelpWindow, main);
 }
-function createSettingsWindow(){
-  console.log("Attempting... createSettingsWindow");
+function createSettingsWindow() {
+  log.info(`Attempting... createSettingsWindow`);
   main = wm.get("main");
-  return wm.open("settings", SettingsWindow, {parent: main, preload_path: path.join(__dirname, "preload", "preload.js")});
+  return wm.open("settings", SettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
 }
-function createTfcWindow(target_url){
-  console.log("Attempting... createTFCWindow");
-  
-  if(!wm.isClosed("settings") || !wm.isClosed("help")) return;
+function createGameSettingsWindow() {
+  log.info(`Attempting... createGameSettingsWindow`);
+  main = wm.get("main");
+  return wm.open("gameSettings", GameSettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
+}
+function createTfcWindow(target_url) {
+  log.info(`Attempting... createTFCWindow`);
+
+  if (!wm.isClosed("settings") || !wm.isClosed("help")) return;
+  sharing.stop("Opening TFC!");
   wm.close("main");
-  
+
   return wm.open("tfc", TFCWindow, target_url, {
     onFailHard: (info) => {
-      console.warn("TFC keepAlive failed hard:", info);
+      log.warn(`TFC keepAlive failed hard:`, info);
 
       wm.open("main", MainWindow);
       wm.get("main")?.window?.webContents?.send(
@@ -148,59 +177,42 @@ function createTfcWindow(target_url){
 Menu.setApplicationMenu(
   Menu.buildFromTemplate(
     [{
-        label: 'File',
-        submenu:[
-          {role: 'Help',
-            click: async () => {
-              createHelpWindow()
-              helpWindow.once('ready-to-show', () => {
-                helpWindow.show();
-              });
-            }
-          },
-          {type: 'separator'},
-          {label: 'Settings',
-            click: async () => {
-              createSettingsWindow()
-              settingsWindow.once('ready-to-show', () => {
-                settingsWindow.show();
-              });
-            }
-          },
-          {type: 'separator'},
-          {role: 'Close'},
-        ]
-      },
-      {
-        label: "Edit",
-        submenu:[
-          {role: 'cut'},
-          {role: 'copy'},
-          {role: 'paste'},
-        ]
-      },
-      {
-        label: "Window",
-        submenu: [
-          {role: "Reload"},
-          {type: "separator"},
-          {role: 'zoomIn'},
-          {role: 'zoomOut'},
-          {role: 'resetZoom'},
-        ]
-      },
-      {
-        label: "Debug",
-        submenu:[
-          {role: 'toggleDevTools'},
-          {role: "forceReload"},
-          { label: 'Restart App',
-            click: () => {
-              app.relaunch(); app.exit(0);
-            }
-          },
-        ]
-      },
+      label: 'File',
+      submenu: [
+        { role: 'close' },
+      ]
+    },
+    {
+      label: "Edit",
+      submenu: [
+        { role: 'cut' },
+        { role: 'copy' },
+        { role: 'paste' },
+      ]
+    },
+    {
+      label: "Window",
+      submenu: [
+        { role: "Reload" },
+        { type: "separator" },
+        { role: 'zoomIn' },
+        { role: 'zoomOut' },
+        { role: 'resetZoom' },
+      ]
+    },
+    {
+      label: "Debug",
+      submenu: [
+        { role: 'toggleDevTools' },
+        { role: "forceReload" },
+        {
+          label: 'Restart App',
+          click: () => {
+            app.relaunch(); app.exit(0);
+          }
+        },
+      ]
+    },
     ],
   )
 );
@@ -210,31 +222,51 @@ Menu.setApplicationMenu(
 // ######################
 
 app.on('window-all-closed', () => {
+  log.warn("################ CLOSING APP ################");
   app.quit();
 });
 
 app.whenReady().then(() => {
 
-  registerSettingsIpc();
-  
+  registerSettingsIpc({
+    onSave: (data) => {
+      const locationChanged =
+        data.LOCATION !== cachedLocation ||
+        data.CUSTOM_LOCATION !== cachedCustomLocation;
+      if(locationChanged) {
+        cachedLocation = data.LOCATION;
+        cachedCustomLocation = data.CUSTOM_LOCATION;
+        sharing.restart("Settings Updated!")
+      }
+    }
+  })
+
+  registerSharingIpc(sharing);
+  registerLoggingIpc(new LoggingService("IPC"));
+  sharing.start();
+
   createMainWindow();
   updater.check();
 
-  ipcMain.on('open-settings-window',() => {
+  ipcMain.on('open-settings-window', () => {
     createSettingsWindow();
   });
 
-  ipcMain.on('open-help-window',() => {
+  ipcMain.on('open-help-window', () => {
     createHelpWindow();
   });
 
-  ipcMain.on('open-tfc-window',(event, target_url) => {
+  ipcMain.on('open-game-settings-window', () => {
+    createGameSettingsWindow();
+  });
+
+  ipcMain.on('open-tfc-window', (event, target_url) => {
     createTfcWindow(target_url);
   });
-  
+
   ipcMain.on("debug-active", () => {
     const main = wm.get("main");
-    main?.window?.webContents?.openDevTools({ mode: "right"});
+    main?.window?.webContents?.openDevTools({ mode: "right" });
   });
 
   ipcMain.on("debug-inactive", () => {

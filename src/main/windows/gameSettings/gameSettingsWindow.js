@@ -2,14 +2,14 @@ const { BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const remoteMain = require("@electron/remote/main");
 
-class SettingsWindow {
+class GameSettingsWindow {
   window;
   wc;
 
   constructor({parent, preload_path}) {
     this.window = new BrowserWindow({
-        width: 675,
-        height: 625,
+        width: 470,
+        height: 360,
         modal: true,
         parent: parent,
         show: false,
@@ -33,7 +33,7 @@ class SettingsWindow {
     this.wc = this.window.webContents;
     // this.wc.openDevTools({ mode: "undocked" });
 
-    this.window.loadFile(path.join(__dirname, "settings.html"));
+    this.window.loadFile(path.join(__dirname, "gameSettings.html"));
   }
 
   close() {
@@ -50,4 +50,4 @@ class SettingsWindow {
   }
 }
 
-module.exports = SettingsWindow;
+module.exports = GameSettingsWindow;

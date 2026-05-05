@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="css/pplaunch.css">
     <script src="js/index.js" defer></script>
     <script type="text/javascript" src="js/pplaunch.js" defer></script>
+    <script src="js/scores.js" defer></script>
     <script src="js/starfield.js" defer></script>
     <script src="js/spaceinvaders.js" defer></script>
     <script src="js/gamelaunch.js" defer></script>
@@ -19,26 +20,46 @@
 <body>
     <table style="position: absolute; left: 0; top: 0;">
         <td id="td_debug" style="display: none;">
-            <img id="debug_icon" onclick="snackBar('You are in debug mode!')" src="../assets/images/debug.svg" class="debug_icon"/>
+            <img id="debug_icon" onclick="snackBar('You are in debug mode!')" src="../assets/images/debug.svg"
+                class="debug_icon" />
         </td>
         <td id="td_clock" style="display: none;">
-            <img id="clock_icon" src="../assets/images/clock-question.svg" class="clock_icon"/>
+            <img id="clock_icon" src="../assets/images/clock-question.svg" class="clock_icon" />
         </td>
     </table>
     <table style="position: absolute; right: 0; top: 0;">
         <td id="td_cloud" style="display: none;">
-            <img id="cloud_icon" onclick="snackBar('Looking for an update')" src="../assets/images/cloud-search.svg" class="cloud_icon"/>
+            <img id="cloud_icon" onclick="snackBar('Looking for an update')" src="../assets/images/cloud-search.svg"
+                class="cloud_icon" />
         </td>
         <td id="td_alert" style="display: none;">
-            <img id="alert_icon" src="../assets/images/alert.svg" class="alert_icon"/>
+            <img id="alert_icon" src="../assets/images/alert.svg" class="alert_icon" />
         </td>
         <td id="td_help">
-            <img id="help_icon" src="../assets/images/help.svg" class="help_icon"/>
+            <img id="help_icon" src="../assets/images/help.svg" class="help_icon" />
         </td>
         <td id="td_settings">
-            <img id="settings_icon" src="../assets/images/settings.svg" class="settings_icon"/>
+            <img id="settings_icon" src="../assets/images/settings.svg" class="settings_icon" />
         </td>
     </table>
+
+    <div id="name-modal" class="modal-overlay" style="display: none;
+        background-color: gray;
+        width: 250px;
+        height: 200px;
+        position: fixed;
+        left: 50%;
+        top: 50%;
+        offset-anchor: center;
+        transform: translate(-50%, -50%);">
+        <div class=" modal-block" style="margin: auto;">
+            <p style="text-align: center;">You made the top 10!</p>
+            <p id="modal-score-display"></p>
+            <input type="text" id="playerNameInput" maxlength="3" placeholder="ABC" style="text-align: center;" /><br>
+            <button id="modal-submit">Submit</button>
+        </div>
+    </div>
+
 
     <div id="main-container" class="container">
         <div id="title" class="title">TFC Is Launching</div>
@@ -61,21 +82,82 @@
         </div> -->
     </div>
 
+    <div id="scores-container" style="display: none; height: 800px;">
+
+        <table>
+            <tr>
+                <td colspan="2">
+                    <div>
+                        <p style="font: 30px RobotoThin;
+                color: #f0f0ff;
+                margin: auto;
+                text-align: center;
+                padding: 5px">
+                            Game Over!
+                        </p>
+                        <p id="gameScore" style="font: 16px RobotoThin;
+                color: #f0f0ff;
+                margin: auto;
+                text-align: center;
+                padding: 5px">
+                            "You scored " + game.score + " and got to level " + game.level"
+                        </p>
+                        <p style="font: 16px RobotoThin;
+                color: #f0f0ff;
+                margin: auto;
+                text-align: center;
+                padding: 5px">
+                            "Touch the screen to play again."
+                        </p>
+                    </div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <h3 style="text-align: center; color: white;">Local Leaderboard</h3>
+                    <table id="localLeaderboard">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Player</th>
+                                <th style="width: 100px;">Score</th>
+                                <th style="width: 100px;">Panel</th>
+                            </tr>
+                        </thead>
+                        <tbody id="localScoreBody"></tbody>
+                    </table>
+                </td>
+                <td style="height: 300px;"></td>
+                <!-- TODO: Implement Global Leaderboard
+                <td>
+                    <h3 style="text-align: center; color: white;">Global Leaderboard</h3>
+                    <table id="globalLeaderboard">
+                        <thead>
+                            <tr>
+                                <th style="width: 100px;">Player</th>
+                                <th style="width: 100px;">Score</th>
+                                <th style="width: 100px;">Truck</th>
+                                <th style="width: 100px;">Panel</th>
+                            </tr>
+                        </thead>
+                        <tbody id="globalScoreBody"></tbody>
+
+                    </table>
+                </td> -->
+            </tr>
+        </table>
+    </div>
+
     <div id="snackbar">
         <p id="snackbar-message">AN ERROR :(</p>
         <div id="snackbar-timer"></div>
     </div>
 
     <div class="footer">
-        <img src="../assets/images/volume-off.svg"
-            onclick="toggleSFXMute()"
-            id="sfxIcon"
-            class="sound-controls"/>
-        <img src="../assets/images/music-off.svg"
-            onclick="toggleMusicMute()"
-            id="musicIcon"
-            class="sound-controls"/>
-        <p id="footer">PPLaunch v3.2.0 &nbsp; | &nbsp; February 20, 2026</p>
+        <!-- Becomes visible from gamelaunch.js-->
+        <img src="../assets/images/volume-off.svg" onclick="toggleSFXMute()" id="sfxIcon" class="sound-controls" />
+        <img src="../assets/images/music-off.svg" onclick="toggleMusicMute()" id="musicIcon" class="sound-controls" />
+        <img src="../assets/images/settings.svg" id="gameSettingsIcon" class="sound-controls" />
+        <p id="footer">PPLaunch v3.3.0 &nbsp; | &nbsp; May 4, 2026</p>
     </div>
 </body>
 

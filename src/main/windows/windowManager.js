@@ -1,4 +1,7 @@
 const { BrowserWindow, ipcMain } = require("electron");
+const LoggingService = require("../services/LoggingService");
+
+const log = new LoggingService("WindowManager");
 
 class WindowManager {
     windows;
@@ -14,14 +17,14 @@ class WindowManager {
 
     open(name, WindowClass, ...args){
         const existing = this.windows[name];
-        console.log("Managing a window -", name);
+        log.info(`Managing a window - ${name}`);
 
         if (existing && existing.window && !existing.window.isDestroyed()){
             try{
                 if(existing.window.isMinimized()) existing.window.restore();
                 if(!existing.window.isVisible()) existing.window.show();
                 existing.window.focus();
-            } catch {console.log("windowManager existing window error!");}
+            } catch {log.error(`Existing window error!`);}
             return existing;
         }
 

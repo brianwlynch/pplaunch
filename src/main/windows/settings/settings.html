@@ -1,11 +1,13 @@
 <!DOCTYPE html>
 <html>
+
 <head>
-    <meta charset="UTF-8" />
-    <title>Settings</title>
-    <link rel="stylesheet" href="./settings.css">
-    <script src="./settings.js" defer></script>
+  <meta charset="UTF-8" />
+  <title>Settings</title>
+  <link rel="stylesheet" href="./settings.css">
+  <script src="./settings.js" defer></script>
 </head>
+
 <body>
   <div class="container">
     <h2>Settings</h2>
@@ -18,24 +20,22 @@
     </div>
 
     <p for="redirectMode"><b><u>Redirect Mode</u></b></p>
-    <select
-      name="redirectMode"
-      id="redirectMode"
-      style="width: 150px;
+    <select name="redirectMode" id="redirectMode" style="width: 150px;
               height: 50px;
               line-height: 50px;
               text-align: center;">
       <option value="tfc">TFC</option>
       <option value="custom">Custom URL</option>
-    </select><hr>
+    </select>
 
-    <table id="tfcInstanceTable"  style="margin: 8px;">
+    <hr>
+    <table id="tfcInstanceTable" style="margin: 8px;">
       <tr>
         <th colspan="6"><u>
-          TFC Instance
-        </u></th>
+            TFC Instance
+          </u></th>
       </tr>
-      
+
       <tr>
         <td style="vertical-align:middle">
           <H4>
@@ -44,10 +44,7 @@
         </td>
 
         <td>
-          <select
-            name="urlPrefix"
-            id="urlPrefix"
-            style="width: 150px;
+          <select name="urlPrefix" id="urlPrefix" style="width: 150px;
                     height: 50px;
                     line-height: 50px;
                     text-align: center;">
@@ -63,16 +60,12 @@
         </td>
 
         <td>
-          <input
-            type="text"
-            id="tfcInstance"
-            placeholder="TFC"
-            style="width: 148px;
+          <input type="text" id="tfcInstance" placeholder="TFC" style="width: 148px;
                     height: 48px;
                     text-align: center;
                     padding: 0;
                     margin: 0;
-                    "/>
+                    " />
         </td>
 
         <td>
@@ -82,10 +75,7 @@
         </td>
 
         <td>
-          <select
-            name="baseURLDropdown"
-            id="baseURLDropdown"
-            style="width: 150px;
+          <select name="baseURLDropdown" id="baseURLDropdown" style="width: 150px;
                     height: 50px;
                     line-height: 50px;
                     text-align: center;">
@@ -96,25 +86,21 @@
       </tr>
 
     </table>
-    
+
     <div class="form-group" id="customDiv" style="display: none; margin: 8px;">
       <label for="customInstance"><b><u>Custom URL:</u></b></label><br>
-      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px"/><br><br>
-      
+      <input type="text" id="customInstance" placeholder="http(s)://customURL.com" style="width:250px" /><br><br>
+
       <label for="loadingString"><b><u>Loading Prefix</u></b></label>
-      
+
       <table style="margin: auto;">
         <td>
-          <input
-            type="text"
-            id="loadingString"
-            placeholder="TFC"
-            style="width: 148px;
+          <input type="text" id="loadingString" placeholder="TFC" style="width: 148px;
                     height: 40px;
                     text-align: center;
                     padding: 0;
                     margin: 0;
-                    "/>
+                    " />
         </td>
         <td style="vertical-align:middle">
           <H5>
@@ -124,10 +110,59 @@
       </table>
 
     </div>
+    <hr>
+
+    <div class="panelLocation" id="panelLocationDiv" style="margin: 8px;">
+      <table id="table" style="margin: 0 auto;">
+        <tr>
+          <td>
+            <label for="unitName"><b><u>Unit Name:</u></b></label><br>
+            <input type="text" id="unit" placeholder="UNIT" style="width: 148px;
+              height: 48px;
+              text-align: center;
+              padding: 0;
+              margin: 5px;
+              " />
+          </td>
+          <td>
+            <label for="panelLocation"><b><u>Panel Location:</u></b></label><br>
+            <select name="panelLocation" id="panelLocation" style="width: 150px;
+              height: 50px;
+              line-height: 50px;
+              text-align: center;
+              margin: 5px;"">
+              <option value="audio">Audio</option>
+              <option value="engineering">Engineering</option>
+              <option value="flex">Flex Room</option>
+              <option value="production">Production</option>
+              <option value="replay">Replay</option>
+              <option value="submix">Submix</option>
+              <option value="td">TD</option>
+              <option value="video">Video</option>
+              <option value="non">Non-Specific (Tablet)</option>
+              <option value="custom">Custom</option>
+            </select>
+          </td>
+          <td id="customLocationCell" style="display: none;">
+            <label for="customLocation"><b><u>Custom Location:</u></b></label><br>
+            <input type="text" id="customLocation" placeholder="Custom" style="width: 148px;
+              height: 48px;
+              text-align: center;
+              padding: 0;
+              margin: 5px;
+              " />
+          </td>
+        </tr>
+      </table>
+      <label><i>Please be specific! Ex. SS7 / SSCBS-B / ND2-D</i></label><br><br>
+    </div>
+
+    <hr>
 
     <button onclick="saveSettings()">Save and Close</button>
   </div>
 
 
 </body>
+
 </html>

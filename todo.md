@@ -1,0 +1,4 @@
+-[ ] User Input for high score
+-[ ] mDNS discovery
+-[ ] Save High Score
+-[ ]

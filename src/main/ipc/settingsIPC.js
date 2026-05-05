@@ -1,13 +1,14 @@
 const { ipcMain } = require("electron");
 const SettingsStore = require("../services/SettingsStore");
 
-function registerSettingsIpc(){
+function registerSettingsIpc({ onSave } = {}){
     const store = new SettingsStore();
 
     ipcMain.handle("settings:load", async () => store.load());
 
     ipcMain.handle("settings:save", async (_evt, data) => {
         store.save(data);
+        onSave?.(data);
         return true;
     });
 
