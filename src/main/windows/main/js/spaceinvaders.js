@@ -429,7 +429,7 @@ PlayState.prototype.update = function (game, dt) {
             this.fireRocket();
         }
     } else {
-        console.warn("No Gamepad!");
+        // console.warn("No Gamepad!");
     }
 
     //  Keep the ship in bounds.
