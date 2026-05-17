@@ -12,7 +12,7 @@
     Create an instance of it, change any of the default values
     in the settings, and call 'start' to run the game.
 
-    Call 'initialise' before 'start' to set the canvas the game
+    Call 'initialize' before 'start' to set the canvas the game
     will draw to.
 
     Call 'moveShip' or 'shipFire' to control the ship.
@@ -403,6 +403,33 @@ PlayState.prototype.update = function (game, dt) {
     }
     if (game.pressedKeys[KEY_SPACE]) {
         this.fireRocket();
+    }
+
+    // Wouldn't it be fun to play with an XBox controller???
+    // Why would there be an XBox controller on a panel pc? Great question!
+    const gamepads = navigator.getGamepads();
+    const gp = gamepads[0];
+    if (gp) {
+        // L to R using joystick
+        const stickX = gp.axes[0];
+        if (stickX < -0.1) {
+            this.ship.x -= this.shipSpeed * dt * Math.abs(stickX);
+        } else if (stickX > 0.1) {
+            this.ship.x += this.shipSpeed * dt * Math.abs(stickX);
+        }
+
+        // L to R using bumpers or triggers
+        if (gp.buttons[4].pressed || gp.buttons[6].pressed) {
+            this.ship.x -= this.shipSpeed * dt;
+        } else if (gp.buttons[5].pressed || gp.buttons[7].pressed) {
+            this.ship.x += this.shipSpeed * dt;
+        }
+
+        if (gp.buttons[0].pressed) {
+            this.fireRocket();
+        }
+    } else {
+        console.warn("No Gamepad!");
     }
 
     //  Keep the ship in bounds.
@@ -1029,3 +1056,12 @@ window.toggleSFXMute = function () {
         window.game.sounds.toggleSFXMute();
     }
 }
+
+// Wouldn't it be fun to play with an XBox controller??
+
+window.addEventListener('gamepadconnected', (e) => {
+    console.log(`Controller connected: ${e.gamepad.id} `);
+})
+window.addEventListener('gamepaddisconnected', (e) => {
+    console.log(`Controller disconnected: ${e.gamepad.id} `);
+})

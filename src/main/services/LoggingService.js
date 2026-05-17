@@ -10,20 +10,20 @@ class Logging{
 
     error(message, service = this.service) {
         const timestamp = new Date().toISOString();
-        const logLine = `[${service}][E] - [${timestamp}] - ${message}\n`;
-        this.append(logLine);
+        const logLine = `[${timestamp}][E][${service}] - ${message}`;
+        this.append(logLine + "\n");
         console.error(logLine);
     }
     warn(message, service = this.service) {
         const timestamp = new Date().toISOString();
-        const logLine = `[${service}][W] - [${timestamp}] - ${message}\n`;
-        this.append(logLine);
+        const logLine = `[${timestamp}][W][${service}] - ${message}`;
+        this.append(logLine + "\n");
         console.warn(logLine);
     }
     info(message, service = this.service) {
         const timestamp = new Date().toISOString();
-        const logLine = `[${service}][I] - [${timestamp}] - ${message}\n`;
-        this.append(logLine);
+        const logLine = `[${timestamp}][I][${service}] - ${message}`;
+        this.append(logLine + "\n");
         console.log(logLine);
     }
 

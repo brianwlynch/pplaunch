@@ -33,16 +33,16 @@ class MainWindow {
 
     }
 
-    close(){
+    close() {
         this.window.close();
         ipcMain.removeAllListeners();
     }
 
-    hide(){
+    hide() {
         this.window.hide();
     }
 
-    handleMessages(){
+    handleMessages() {
         // IPC Functions go here
     }
 }

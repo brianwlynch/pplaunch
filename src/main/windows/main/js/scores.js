@@ -7,35 +7,36 @@ class Score {
         this.id = self.crypto.randomUUID();
         this.player = player;
         this.score = game.score;
+        this.level = game.level;
 
         if(settings.LOCATION == "custom"){
             this.panel = settings.CUSTOM_LOCATION;
         } else this.panel = settings.LOCATION;
         this.truck = settings.UNIT;
 
-        window.sharingAPI.onScoresUpdated((mergedScores) => {
-            localScores = mergedScores;
-            updateUI();
-        })
     }
 }
 
+window.sharingAPI.onScoresUpdated((mergedScores) => {
+    localScores = mergedScores;
+    const localScoreBody = document.getElementById("localScoreBody");
+    if(!localScoreBody) return;
+    localScores.sort((a, b) => b.score - a.score);
+    localScoreBody.innerHTML = '';
+    localScores.forEach(score => {
+        const row = document.createElement('tr');
+        row.innerHTML = `
+        <td>${score.player}</td>
+        <td>${score.level}</td>
+        <td>${score.score}</td>
+        <td>${score.panel}</td>`;
+        localScoreBody.appendChild(row);
+    });
+})
 
 let localScores = [];
 let scoresInitialized = false;
 let globalScores = [];
-
-function encodeScores(scores){
-    return btoa(JSON.stringify(scores));
-}
-
-function decodeScores(encoded){
-    try{
-        return JSON.parse(atob(encoded));
-    } catch (error) {
-        window.loggingAPI.warn(`Decoding error. - ${error}`, "Scores");
-    }
-}
 
 /** Send scores from SpaceInvaders to the scores scripts */
 async function sendScores(game){
@@ -44,7 +45,7 @@ async function sendScores(game){
         scoresInitialized = true;
     }
 
-    window.loggingAPI.info(`Got Scores!`, "Scores");
+    window.loggingAPI.info(`Got Scores from game!`, "Scores");
     const qualifies = localScores.length < 10 || game.score > localScores[localScores.length - 1].score;
     
     let playerName = '';
@@ -78,8 +79,10 @@ function promptPlayerName(score){
         input.value = '';
         modal.style.display = 'flex';
 
+        input.focus();
+
         function onSubmit() {
-            const name = input.value.trim() || "ANY";
+            const name = input.value.trim() || "NO1";
             modal.style.display = 'none';
             submitBtn.removeEventListener("click", onSubmit);
             resolve(name);
@@ -90,7 +93,7 @@ function promptPlayerName(score){
 }
 
 
-function updateUI() {
+function updateUI(game) {
 
     document.getElementById("gamecontainer").style.display = "none";
     document.getElementById("scores-container").style.display = "flex";
@@ -106,6 +109,7 @@ function updateUI() {
         const row = document.createElement('tr');
         row.innerHTML = `
         <td>${score.player}</td>
+        <td>${score.level}</td>
         <td>${score.score}</td>
         <td>${score.panel}</td>`;
         localScoreBody.appendChild(row);
@@ -130,4 +134,16 @@ function updateUI() {
     //     globalScoreBody.appendChild(row);
     // });
 
+}
+
+function encodeScores(scores){
+    return btoa(JSON.stringify(scores));
+}
+
+function decodeScores(encoded){
+    try{
+        return JSON.parse(atob(encoded));
+    } catch (error) {
+        window.loggingAPI.warn(`Decoding error. - ${error}`, "Scores");
+    }
 }

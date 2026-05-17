@@ -137,7 +137,7 @@ body {
 
 .redirect.shown {
     padding: 5px 0;
-    height: inherit;
+    height: 125px;
     width: 300px;
     background-color: #525c5f;
     border-radius: 10px;

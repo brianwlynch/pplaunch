@@ -13,7 +13,7 @@ const TFCWindow = require("./windows/tfc/tfcWindow");
 const WindowManager = require("./windows/windowManager");
 const registerSettingsIpc = require("./ipc/settingsIPC");
 const AutoUpdaterService = require("./services/AutoUpdaterService");
-const LeaderboardSharingService = require("./services/LeaderboardSharingService");
+const SharingService = require("./services/SharingService");
 const registerSharingIpc = require("./ipc/sharingIPC");
 const LoggingService = require("./services/LoggingService");
 const registerLoggingIpc = require('./ipc/loggingIPC');
@@ -24,7 +24,7 @@ autoUpdater.autoInstallOnAppQuit = true;
 
 const wm = new WindowManager();
 const updater = new AutoUpdaterService({ windowManager: wm });
-const sharing = new LeaderboardSharingService({ windowManager: wm });
+const sharing = new SharingService({ windowManager: wm });
 const log = new LoggingService("Main");
 log.info("################ STARTING APP ################");
 
@@ -74,13 +74,6 @@ app.on('second-instance', (event, commandLine, workingDirectory) => {
     }
   }
 });
-
-app.on("before-quit", async (event) => {
-  event.preventDefault();
-  await sharing.stop("Quitting");
-  app.exit(0);
-})
-
 
 // ############################
 // ### Auto Start Settings  ###
@@ -132,26 +125,26 @@ if (process.platform === 'linux') {
 // ######################
 
 function createMainWindow() {
-  log.info(`Attempting... createMainWindow`);
+  logNewWindow("Main");
   return wm.open("main", MainWindow);
 }
 function createHelpWindow() {
-  log.info(`Attempting... createHelpWindow`);
+  logNewWindow("Help");
   main = wm.get("main");
   return wm.open("help", HelpWindow, main);
 }
 function createSettingsWindow() {
-  log.info(`Attempting... createSettingsWindow`);
+  logNewWindow("Settings");
   main = wm.get("main");
   return wm.open("settings", SettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
 }
 function createGameSettingsWindow() {
-  log.info(`Attempting... createGameSettingsWindow`);
+  logNewWindow("Game Settings");
   main = wm.get("main");
   return wm.open("gameSettings", GameSettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
 }
 function createTfcWindow(target_url) {
-  log.info(`Attempting... createTFCWindow`);
+  logNewWindow("TFC");
 
   if (!wm.isClosed("settings") || !wm.isClosed("help")) return;
   sharing.stop("Opening TFC!");
@@ -159,14 +152,18 @@ function createTfcWindow(target_url) {
 
   return wm.open("tfc", TFCWindow, target_url, {
     onFailHard: (info) => {
-      log.warn(`TFC keepAlive failed hard:`, info);
+      log.warn(`TFC keepAlive failed! Going back to Main window!`);
 
+      logNewWindow("Main");
       wm.open("main", MainWindow);
       wm.get("main")?.window?.webContents?.send(
         "updateMessage", "Can't get to TFC for 60s! <br> ($info.reason)."
       );
     }
   });
+}
+function logNewWindow(win){
+  log.info(`Opening a window: ${win}`);
 }
 
 
@@ -221,8 +218,15 @@ Menu.setApplicationMenu(
 // ### App Functions  ###
 // ######################
 
+app.on("before-quit", async (event) => {
+  event.preventDefault();
+
+  await sharing.stop("Quitting");
+  log.warn("################ CLOSING APP ################\n");
+  app.exit(0);
+})
+
 app.on('window-all-closed', () => {
-  log.warn("################ CLOSING APP ################");
   app.quit();
 });
 
@@ -275,3 +279,7 @@ app.whenReady().then(() => {
   });
 
 });
+
+// Doesn't work when running `npm run start` from network share; an electron limitation.
+// app.commandLine.appendSwitch('disable-gpu');
+// app.commandLine.appendSwitch('disable-gpu-sandbox');
