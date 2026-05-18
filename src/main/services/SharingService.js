@@ -1,7 +1,12 @@
 const fs = require("fs");
 const path = require("path");
 const { app } = require("electron");
-const { Bonjour } = require("bonjour-service");
+let Bonjour = null;
+try {
+  Bonjour = require("bonjour-service").Bonjour;
+} catch (error) {
+  console.error(`[Sharing] bonjour-service module missing: ${error.message}`);
+}
 const { version } = require("os");
 const SettingsStore = require("./SettingsStore");
 const http = require("http");
@@ -66,6 +71,14 @@ class Sharing {
         }
 
         this._serviceName = `${unit}${location}`.slice(0, 63);
+        if (!Bonjour) {
+            log.warn("bonjour-service is unavailable. Sharing discovery is disabled.");
+            this._server.listen(SERVICE_PORT, () => log.info(`HTTP server listening on port ${SERVICE_PORT}`));
+            this._heartbeatTimer = setInterval(() => this._checkPeers(), 30_000);
+            log.info(`Started HTTP sharing endpoint without Bonjour discovery as: ${this._serviceName}`);
+            return;
+        }
+
         this._bonjour = new Bonjour();
         this._published = this._bonjour.publish({
             name: this._serviceName,

@@ -35,6 +35,16 @@ let cachedCustomLocation = initialSettings.CUSTOM_LOCATION;
 
 require('@electron/remote/main').initialize();
 
+// Global main-process error handling
+process.on('uncaughtException', (error) => {
+  log.error(`Uncaught exception: ${error.stack || error.message || error}`);
+  app.exit(1);
+});
+
+process.on('unhandledRejection', (reason) => {
+  log.error(`Unhandled promise rejection: ${reason?.stack || reason?.message || reason}`);
+});
+
 //Only allow the app to run once
 const appLocked = app.requestSingleInstanceLock();
 if (!appLocked) {
