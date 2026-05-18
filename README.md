@@ -9,6 +9,9 @@ The panel will open, then every five seconds it will try to connect to the TFC s
 ## First launch
 Upon first launch, the TFC Instance will not be set. Open the settings page (with the gear) and set your instance.
 
+## Changelog
+[CHANGELOG](CHANGELOG.md)
+
 ## Debug mode
 In the settings menu you can enable debug mode. Debug mode is checked to see if it is enabled every five seconds. Developer tools will open!
 The panel will continue to operate as normally. Use the `console` tab in dev tools to see some logs. If the panel does connect to TFC, it **will not** redirect you until you disable debug mode. 
