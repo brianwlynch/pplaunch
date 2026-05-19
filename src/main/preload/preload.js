@@ -1,7 +1,7 @@
 const { contextBridge, ipcRenderer } = require('electron');
 const fs = require('fs');
 const path = require('path');
-const { app } = require('@electron/remote');
+// const { app } = require('@electron/remote');
 const { callbackify } = require('util');
 
 

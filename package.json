@@ -7,7 +7,9 @@
   "scripts": {
     "start": "electron-forge start",
     "build": "npm run update-footer && electron-builder",
-    "update-footer": "node update-footer.js"
+    "dev": "npm run update-footer-dev && electron-builder",
+    "update-footer": "node update-footer.js",
+    "update-footer-dev": "node update-footer-dev.js"
   },
   "keywords": [],
   "author": "NEP Group, Brian Lynch",

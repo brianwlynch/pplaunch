@@ -172,7 +172,7 @@ function createTfcWindow(target_url) {
     }
   });
 }
-function logNewWindow(win){
+function logNewWindow(win) {
   log.info(`Opening a window: ${win}`);
 }
 
@@ -247,7 +247,7 @@ app.whenReady().then(() => {
       const locationChanged =
         data.LOCATION !== cachedLocation ||
         data.CUSTOM_LOCATION !== cachedCustomLocation;
-      if(locationChanged) {
+      if (locationChanged) {
         cachedLocation = data.LOCATION;
         cachedCustomLocation = data.CUSTOM_LOCATION;
         sharing.restart("Settings Updated!")

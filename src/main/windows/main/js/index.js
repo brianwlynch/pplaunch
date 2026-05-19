@@ -96,6 +96,9 @@ function loadSettings(settings) {
 async function checkServer() {
     settings = await window.settingsAPI.load();
     
+    if (!updatedAutoUpdateUI){
+        updateMessage(receivedUpdateMessage);
+    }
     loadSettings(settings);
     
     if ((!TFC_INSTANCE || TFC_INSTANCE == "none") && REDIRECT_MODE == "tfc") {
@@ -149,7 +152,7 @@ async function checkServer() {
     }
 
     curTime = (Date.now() - startTime)/ 60000;
-    waitTime = 10 //Minutes
+    waitTime = 1 //Minutes
     if( curTime >= waitTime){
         clockIcon.style.display = "table-cell";
     } else {
@@ -162,6 +165,7 @@ let redirected = false;
 function redirect(){
     if (DEBUG){
         console.warn(`Connection to TFC is ok! Won't redirect due to debug mode!`);
+        clockIcon.addEventListener("click", () => snackBar('You are in Debug mode!'));
         return;
     }
     
@@ -179,6 +183,7 @@ function redirect(){
 function redirectGame(){
     if (DEBUG){
         console.warn(`Connection to TFC is ok! Won't redirect due to debug mode!`);
+        clockIcon.addEventListener("click", () => snackBar('You are in Debug mode!'));
         return;
     } else {
         if (!redirected){
@@ -192,11 +197,24 @@ function redirectGame(){
 
 document.addEventListener("DOMContentLoaded", function() {
     window.bridge.updateMessage(updateMessage);
+    receivedUpdateMessage = updateMessage;
 });
 
+
+let receivedUpdateMessage = null;
+let updatedAutoUpdateUI = false;
 function updateMessage(event, message){
     let icon = document.getElementById("cloud_icon");
-    let td = document.getElementById("td-cloud");
+    let td = document.getElementById("td_cloud");
+
+    if(!icon || !td){
+        console.log(`[Index/AutoUpdater] ${message}`);
+        console.warn("[Index/AutoUpdater] DOM Not ready for UI Updates");
+        updatedAutoUpdateUI = false;
+        return;
+    } else {
+        updatedAutoUpdateUI = true;
+    }
 
     icon.onclick = null;
 
@@ -206,23 +224,20 @@ function updateMessage(event, message){
         return;
     }
 
+    window.loggingAPI.info(message, "Index");
     switch(message){
         case "Looking for updates":
-            console.log(message);
             icon.src = "../assets/images/cloud-search.svg";
             icon.onclick = () => snackBar("Looking for an update.");
             break;
             case "Update available.":
-            console.log(message);
             icon.src = "../assets/images/cloud-download.svg";
             icon.onclick = () => snackBar("Downloading new update.");
             break;
             case "Update not available.":
-            console.log(message);
             td.style.display = "none";
             break;
             case "Update downloaded.":
-            console.log(message);
             icon.src = "../assets/images/cloud-check.svg";
             icon.onclick = () => snackBar("Update downloaded. Will be installed when panel closes.");
             break;
