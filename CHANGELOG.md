@@ -1,7 +1,9 @@
 ## Changelog
 
 ### v3.3.0 - **Beta**
-- Added better logging. There is now an `app.log` file in the app directory
+- Added better logging. There is now an `app.log` file in the app directory.
+  - Windows - `%appdata%\TFC Public Panel Launcher\app.log`
+  - Linux - `~/.config/TFC Public Panel Launcher/app.log`
 - Added a leaderboard to SpaceInvaders
   - Local Leaderboard uses mDNS to share scores across panels on the same truck.
   - Added check to disable bonjour on linux, need to implement other mDNS option.
