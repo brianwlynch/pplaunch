@@ -7,13 +7,14 @@
 - Added a leaderboard to SpaceInvaders
   - Local Leaderboard uses mDNS to share scores across panels on the same truck.
   - Added check to disable bonjour on linux, need to implement other mDNS option.
-- Fixed AutoUpdater DOM bug.
 - Added a dev script to build app with timestamp and add "-dev" to footer.
+- Fixed AutoUpdater DOM bug.
+- Fixed scores returning after resetting the leaderboard.
 
 ### v3.2.0 - **Latest**
 - Removed Demo mode
 - ReStructured project files
-  - Converted old `index.js` to become `main.js` took alot of the file and split it into multiple smaller ones.
+  - Converted old `index.js` to become `main.js` took a lot of the file and split it into multiple smaller ones.
 - Updated settings page to allow redirect to new ui.
 - Goes back to wait screen if connection to TFC is lost for 45 seconds.
 - Added auto update features.
@@ -39,12 +40,12 @@
 - Independent sound controls for music and sfx.
 
 ### v3.0.1
-- Fixed persistant zoom across pages
+- Fixed persistent zoom across pages
 - Checks to see if the settings.json exists
 
 ### v3.0.0
 - Switched to electron build. 
-- Script running in backgroup is no longer needed
+- Script running in background is no longer needed
 - Added music to shenanigans
 - Added new loading screen messages
 

@@ -40,10 +40,8 @@ let globalScores = [];
 
 /** Send scores from SpaceInvaders to the scores scripts */
 async function sendScores(game){
-    if(!scoresInitialized){
-        if (settings.LOCAL_SCORES) localScores = decodeScores(settings.LOCAL_SCORES);
-        scoresInitialized = true;
-    }
+    const settingsScores = await window.settingsAPI.load();
+    localScores = settingsScores.LOCAL_SCORES ? decodeScores(settingsScores.LOCAL_SCORES) : [];
 
     window.loggingAPI.info(`Got Scores from game!`, "Scores");
     const qualifies = localScores.length < 10 || game.score > localScores[localScores.length - 1].score;
