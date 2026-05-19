@@ -152,7 +152,7 @@ async function checkServer() {
     }
 
     curTime = (Date.now() - startTime)/ 60000;
-    waitTime = 1 //Minutes
+    waitTime = 10 //Minutes
     if( curTime >= waitTime){
         clockIcon.style.display = "table-cell";
     } else {

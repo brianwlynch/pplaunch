@@ -5,6 +5,8 @@
 - Added a leaderboard to SpaceInvaders
   - Local Leaderboard uses mDNS to share scores across panels on the same truck.
   - Added check to disable bonjour on linux, need to implement other mDNS option.
+- Fixed AutoUpdater DOM bug.
+- Added a dev script to build app with timestamp and add "-dev" to footer.
 
 ### v3.2.0 - **Latest**
 - Removed Demo mode
