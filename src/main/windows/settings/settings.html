@@ -158,9 +158,18 @@
     </div>
 
     <hr>
-
-    <button onclick="saveSettings()">Save and Close</button>
+    <button onclick="saveSettings()">Save Settings and Close</button>
+    <hr>
+    
+    <button id="clearCookies" onclick="clearCookies()">
+      <img src="../assets/images/alert.svg" id="alertIcon"><br>
+      <label for="alertIcon" style="color: black;">DELETE ALL COOKIES</label>
+    </button>
+    <div id="resetHover">
+      All cookies will be deleted and the app will restart.<br> Settings will remain.
+    </div><br>
   </div>
+
 
 
 </body>

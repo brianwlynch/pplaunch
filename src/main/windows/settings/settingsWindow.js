@@ -9,7 +9,7 @@ class SettingsWindow {
   constructor({parent, preload_path}) {
     this.window = new BrowserWindow({
         width: 675,
-        height: 625,
+        height: 750,
         modal: true,
         parent: parent,
         show: false,

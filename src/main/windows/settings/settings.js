@@ -153,3 +153,9 @@ panelLocationSelect.addEventListener("change", () => {
         locationConfig.hide.forEach(id => document.getElementById(id).style.display = "none");
     }
 });
+
+
+async function clearCookies(){
+    console.log("Button Pressed!");
+    await window.settingsAPI.clearCookies();
+}

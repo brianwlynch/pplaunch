@@ -11,7 +11,9 @@ contextBridge.exposeInMainWorld('settingsAPI', {
 
     onChanged: (cb) => {
         ipcRenderer.on("settings:changed", (_evt, next) => cb(next));
-    }
+    },
+
+    clearCookies: () => ipcRenderer.invoke("settings:clearCookies"),
 });
 
 contextBridge.exposeInMainWorld("debugAPI", {

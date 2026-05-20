@@ -162,13 +162,10 @@ function createTfcWindow(target_url) {
 
   return wm.open("tfc", TFCWindow, target_url, {
     onFailHard: (info) => {
-      log.warn(`TFC keepAlive failed! Going back to Main window!`);
+      log.warn(`TFC keepAlive failed! Going back to Main window! Reason: ${info.reason}`);
 
       logNewWindow("Main");
       wm.open("main", MainWindow);
-      wm.get("main")?.window?.webContents?.send(
-        "updateMessage", "Can't get to TFC for 60s! <br> ($info.reason)."
-      );
     }
   });
 }

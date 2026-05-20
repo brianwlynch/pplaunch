@@ -1,6 +1,6 @@
 const fs = require("fs");
 const path = require("path");
-const { app } = require("electron");
+const { app, session } = require("electron");
 const LoggingService = require("./LoggingService");
 const log = new LoggingService("SettingsStore");
 
@@ -39,6 +39,19 @@ class SettingsStore{
     save(data){
         this.ensureExists();
         fs.writeFileSync(this.userSettingsPath, JSON.stringify(data, null, 2), "utf-8");
+    }
+
+    clearCookies(){
+        session.defaultSession.clearStorageData({
+            storages: ['cookies']
+        }).then(() => {
+            log.warn("Cookies have been reset!");
+            app.relaunch();
+            log.warn("################ RESTARTING APP ################");
+            app.exit();
+        }).catch((err) => {
+            log.error(`Failed to clear cookies: ${err}`);
+        });
     }
 }
 

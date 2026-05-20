@@ -5,7 +5,7 @@
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "npm run update-footer-dev && electron-forge start",
     "build": "npm run update-footer && electron-builder",
     "dev": "npm run update-footer-dev && electron-builder",
     "update-footer": "node update-footer.js",

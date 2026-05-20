@@ -8,6 +8,7 @@
   - Local Leaderboard uses mDNS to share scores across panels on the same truck.
   - Added check to disable bonjour on linux, need to implement other mDNS option.
 - Added a dev script to build app with timestamp and add "-dev" to footer.
+- Added option in settings window to clear cookies.
 - Fixed AutoUpdater DOM bug.
 - Fixed scores returning after resetting the leaderboard.
 

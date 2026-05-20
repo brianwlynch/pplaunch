@@ -12,6 +12,8 @@ function registerSettingsIpc({ onSave } = {}){
         return true;
     });
 
+    ipcMain.handle("settings:clearCookies", async () => store.clearCookies());
+
     ipcMain.handle("zoom:get", async(_e, origin) => {
         const s = store.load();
         const levels = s.ZOOM_LEVELS || {};
