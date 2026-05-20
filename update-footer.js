@@ -8,7 +8,7 @@ const path = require('path');
 const chalk = require('chalk');
 
 const pkg = require('./package.json')
-const htmlPath = path.join(__dirname, 'src', 'main', 'windows', 'main', 'index.html');
+const htmlPath = path.join(__dirname, 'src', 'main', 'windows', 'index', 'index.html');
 
 const version = pkg.version;
 const date = new Date().toLocaleDateString('en-US',{ 

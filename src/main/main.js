@@ -5,7 +5,7 @@ const { fstat } = require('node:fs');
 const fs = require('fs');
 const { eventNames } = require('node:process');
 const { autoUpdater, AppUpdater } = require("electron-updater");
-const MainWindow = require("./windows/main/mainWindow");
+const MainWindow = require("./windows/index/mainWindow");
 const HelpWindow = require("./windows/help/helpWindow");
 const SettingsWindow = require("./windows/settings/settingsWindow");
 const GameSettingsWindow = require("./windows/gameSettings/gameSettingsWindow");
@@ -26,7 +26,7 @@ const wm = new WindowManager();
 const updater = new AutoUpdaterService({ windowManager: wm });
 const sharing = new SharingService({ windowManager: wm });
 const log = new LoggingService("Main");
-log.info("################ STARTING APP ################");
+log.warn("################ STARTING APP ################\n");
 
 const settings = new SettingsStore();
 const initialSettings = settings.load();
@@ -229,7 +229,7 @@ app.on("before-quit", async (event) => {
   event.preventDefault();
 
   await sharing.stop("Quitting");
-  log.warn("################ CLOSING APP ################\n");
+  log.warn("################ CLOSING APP ################");
   app.exit(0);
 })
 

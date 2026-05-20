@@ -5,11 +5,9 @@
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "npm run update-footer-dev && electron-forge start",
-    "build": "npm run update-footer && electron-builder",
-    "dev": "npm run update-footer-dev && electron-builder",
-    "update-footer": "node update-footer.js",
-    "update-footer-dev": "node update-footer-dev.js"
+    "start": "node update-footer-dev.js && electron-forge start",
+    "build": "node update-footer.js && electron-builder",
+    "dev": "node update-footer-dev.js && node build-dev.js"
   },
   "keywords": [],
   "author": "NEP Group, Brian Lynch",
@@ -41,7 +39,7 @@
   "build": {
     "appId": "com.nepgroup.tfc-public-panel-launcher",
     "productName": "TFC Public Panel Launcher",
-    "artifactName": "${productName}-${version}-${os}-${arch}.${ext}",
+    "artifactName": "TFC-Public-Panel-Launcher-${version}-${os}-${arch}.${ext}",
     "win": {
       "target": "nsis",
       "icon": "src/main/windows/assets/images/icon.ico"

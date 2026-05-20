@@ -1,8 +1,9 @@
 const fs = require("fs");
 const path = require("path");
 const { app } = require("electron");
+const { measureMemory } = require("vm");
 
-class Logging{
+class Logging {
     constructor(service) {
         this.service = service;
         this.logPath = path.join(app.getPath('userData'), 'app.log');
@@ -26,11 +27,18 @@ class Logging{
         this.append(logLine + "\n");
         console.log(logLine);
     }
+    
 
-    append(message){
-        fs.appendFileSync(this.logPath, message, (err) => {
-            if (err) throw err;
-        });
+    append(message) {
+        const MAX_LINES = 500;
+        const FOOTER = "################ LAST LOG LINE ################";
+        const existing = fs.existsSync(this.logPath)
+            ? fs.readFileSync(this.logPath, 'utf8')
+            : '';
+
+        const existingLines = existing.split("\n").filter(l => !l.includes(FOOTER));
+        const lines = [message.trimEnd(), ...existingLines].slice(0, MAX_LINES);
+        fs.writeFileSync(this.logPath, lines.join("\n") + "\n" +  FOOTER);
     }
 
 }
