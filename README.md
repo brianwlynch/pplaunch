@@ -9,6 +9,12 @@ The panel will open, then every five seconds it will try to connect to the TFC s
 ## First launch
 Upon first launch, the TFC Instance will not be set. Open the settings page (with the gear) and set your instance.
 
+## Other Versions
+- [Android](https://github.com/brianwlynch/pplaunch-android) - Github
+  - Google Play - *Coming Soon*
+- iOS (iPAD) - *Coming Soon*
+
+
 ## Changelog
 [CHANGELOG](CHANGELOG.md)
 
@@ -17,10 +23,11 @@ In the settings menu you can enable debug mode. Debug mode is checked to see if 
 The panel will continue to operate as normally. Use the `console` tab in dev tools to see some logs. If the panel does connect to TFC, it **will not** redirect you until you disable debug mode. 
 
 ---
-<a href="https://www.star-history.com/?repos=brianwlynch%2Fpplaunch&type=date&logscale=&legend=top-left">
+## Star History
+<a href="https://www.star-history.com/?repos=brianwlynch%2Fpplaunch%2Cbrianwlynch%2Fpplaunch-android&type=date&logscale=&legend=top-left">
  <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=brianwlynch/pplaunch&type=date&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android&type=date&theme=dark&logscale&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android&type=date&logscale&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android&type=date&logscale&legend=top-left" />
  </picture>
 </a>
