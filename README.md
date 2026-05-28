@@ -16,6 +16,10 @@ Upon first launch, the TFC Instance will not be set. Open the settings page (wit
 
 
 ## Changelog
+
+[v3.3.0](https://github.com/brianwlynch/pplaunch/releases/tag/v3.3.0-beta) - *Beta*
+[v3.2.0](https://github.com/brianwlynch/pplaunch/releases/tag/3.2.0) - *Latest*
+
 [CHANGELOG](CHANGELOG.md)
 
 ## Debug mode
