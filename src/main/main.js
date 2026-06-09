@@ -4,7 +4,6 @@ const path = require('node:path');
 const { fstat } = require('node:fs');
 const fs = require('fs');
 const { eventNames } = require('node:process');
-const { autoUpdater, AppUpdater } = require("electron-updater");
 const MainWindow = require("./windows/index/mainWindow");
 const HelpWindow = require("./windows/help/helpWindow");
 const SettingsWindow = require("./windows/settings/settingsWindow");
@@ -12,19 +11,11 @@ const GameSettingsWindow = require("./windows/gameSettings/gameSettingsWindow");
 const TFCWindow = require("./windows/tfc/tfcWindow");
 const WindowManager = require("./windows/windowManager");
 const registerSettingsIpc = require("./ipc/settingsIPC");
-const AutoUpdaterService = require("./services/AutoUpdaterService");
-const SharingService = require("./services/SharingService");
-const registerSharingIpc = require("./ipc/sharingIPC");
 const LoggingService = require("./services/LoggingService");
 const registerLoggingIpc = require('./ipc/loggingIPC');
 const SettingsStore = require("./services/SettingsStore");
 
-autoUpdater.autoDownload = false;
-autoUpdater.autoInstallOnAppQuit = true;
-
 const wm = new WindowManager();
-const updater = new AutoUpdaterService({ windowManager: wm });
-const sharing = new SharingService({ windowManager: wm });
 const log = new LoggingService("Main");
 log.warn("################ STARTING APP ################\n");
 
@@ -157,7 +148,6 @@ function createTfcWindow(target_url) {
   logNewWindow("TFC");
 
   if (!wm.isClosed("settings") || !wm.isClosed("help")) return;
-  sharing.stop("Opening TFC!");
   wm.close("main");
 
   return wm.open("tfc", TFCWindow, target_url, {});
@@ -221,7 +211,6 @@ Menu.setApplicationMenu(
 app.on("before-quit", async (event) => {
   event.preventDefault();
 
-  await sharing.stop("Quitting");
   log.warn("################ CLOSING APP ################");
   app.exit(0);
 })
@@ -240,17 +229,13 @@ app.whenReady().then(() => {
       if (locationChanged) {
         cachedLocation = data.LOCATION;
         cachedCustomLocation = data.CUSTOM_LOCATION;
-        sharing.restart("Settings Updated!")
       }
     }
   })
 
-  registerSharingIpc(sharing);
   registerLoggingIpc(new LoggingService("IPC"));
-  sharing.start();
 
   createMainWindow();
-  updater.check();
 
   ipcMain.on('open-settings-window', () => {
     createSettingsWindow();

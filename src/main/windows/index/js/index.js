@@ -96,9 +96,6 @@ function loadSettings(settings) {
 async function checkServer() {
     settings = await window.settingsAPI.load();
     
-    if (!updatedAutoUpdateUI){
-        updateMessage(receivedUpdateMessage);
-    }
     loadSettings(settings);
     
     if ((!TFC_INSTANCE || TFC_INSTANCE == "none") && REDIRECT_MODE == "tfc") {
@@ -195,55 +192,6 @@ function redirectGame(){
         } else {
             console.warn(`Already redirected!`);
         }
-    }
-}
-
-document.addEventListener("DOMContentLoaded", function() {
-    window.bridge.updateMessage(updateMessage);
-    receivedUpdateMessage = updateMessage;
-});
-
-
-let receivedUpdateMessage = null;
-let updatedAutoUpdateUI = false;
-function updateMessage(event, message){
-    let icon = document.getElementById("cloud_icon");
-    let td = document.getElementById("td_cloud");
-
-    if(!icon || !td){
-        console.log(`[Index/AutoUpdater] ${message}`);
-        console.warn("[Index/AutoUpdater] DOM Not ready for UI Updates");
-        updatedAutoUpdateUI = false;
-        return;
-    } else {
-        updatedAutoUpdateUI = true;
-    }
-
-    icon.onclick = null;
-
-    if (message.includes("Error")) {
-        console.error(message);
-        td.style.display = "none";
-        return;
-    }
-
-    window.loggingAPI.info(message, "Index");
-    switch(message){
-        case "Looking for updates":
-            icon.src = "../assets/images/cloud-search.svg";
-            icon.onclick = () => snackBar("Looking for an update.");
-            break;
-            case "Update available.":
-            icon.src = "../assets/images/cloud-download.svg";
-            icon.onclick = () => snackBar("Downloading new update.");
-            break;
-            case "Update not available.":
-            td.style.display = "none";
-            break;
-            case "Update downloaded.":
-            icon.src = "../assets/images/cloud-check.svg";
-            icon.onclick = () => snackBar("Update downloaded. Will be installed when panel closes.");
-            break;
     }
 }
 

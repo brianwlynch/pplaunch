@@ -17,22 +17,7 @@ class Score {
     }
 }
 
-window.sharingAPI.onScoresUpdated((mergedScores) => {
-    localScores = mergedScores;
-    const localScoreBody = document.getElementById("localScoreBody");
-    if(!localScoreBody) return;
-    localScores.sort((a, b) => b.score - a.score);
-    localScoreBody.innerHTML = '';
-    localScores.forEach(score => {
-        const row = document.createElement('tr');
-        row.innerHTML = `
-        <td>${score.player}</td>
-        <td>${score.level}</td>
-        <td>${score.score}</td>
-        <td>${score.panel}</td>`;
-        localScoreBody.appendChild(row);
-    });
-})
+
 
 let localScores = [];
 let scoresInitialized = false;
@@ -62,7 +47,6 @@ async function sendScores(game){
     globalScores.push(score);
 
     await window.settingsAPI.save({ ...settings, LOCAL_SCORES: encodeScores(localScores)});
-    await window.sharingAPI.pushScores(localScores);
     updateUI(game);
 }
 

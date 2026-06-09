@@ -2,6 +2,7 @@
 
 ### v3.3.0 - **Beta**
 - Removed Keep Alive service
+- Removed Auto Updater
 - Added better logging. There is now an `app.log` file in the app directory.
   - Logs read bottom up.
   - Windows - `%appdata%\TFC Public Panel Launcher\app.log`
@@ -10,7 +11,7 @@
 - Added a dev script to build app with timestamp and add "-dev" to footer of index.html.
 - Added option in settings window to clear cookies.
 - Fixed AutoUpdater DOM bug.
-- Added a HTTP 500 response check. Won't redirect; or it'll go back to loading screen.
+- Added a HTTP 500 response check. Won't redirect
 - Fixed scores returning after resetting the leaderboard.
 - Renamed "main" window folder to "index".
 
