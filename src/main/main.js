@@ -160,14 +160,7 @@ function createTfcWindow(target_url) {
   sharing.stop("Opening TFC!");
   wm.close("main");
 
-  return wm.open("tfc", TFCWindow, target_url, {
-    onFailHard: (info) => {
-      log.warn(`TFC keepAlive failed! Going back to Main window! Reason: ${info.reason}`);
-
-      logNewWindow("Main");
-      wm.open("main", MainWindow);
-    }
-  });
+  return wm.open("tfc", TFCWindow, target_url, {});
 }
 function logNewWindow(win) {
   log.info(`Opening a window: ${win}`);

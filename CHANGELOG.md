@@ -1,16 +1,16 @@
 ## Changelog
 
 ### v3.3.0 - **Beta**
+- Removed Keep Alive service
 - Added better logging. There is now an `app.log` file in the app directory.
   - Logs read bottom up.
   - Windows - `%appdata%\TFC Public Panel Launcher\app.log`
   - Linux - `~/.config/TFC Public Panel Launcher/app.log`
 - Added a leaderboard to SpaceInvaders
-  - Local Leaderboard uses mDNS to share scores across panels on the same truck.
-  - Added check to disable bonjour on linux, need to implement other mDNS option.
 - Added a dev script to build app with timestamp and add "-dev" to footer of index.html.
 - Added option in settings window to clear cookies.
 - Fixed AutoUpdater DOM bug.
+- Added a HTTP 500 response check. Won't redirect; or it'll go back to loading screen.
 - Fixed scores returning after resetting the leaderboard.
 - Renamed "main" window folder to "index".
 

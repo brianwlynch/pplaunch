@@ -1,7 +1,6 @@
 const { BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const path = require("path");
 const remoteMain = require("@electron/remote/main");
-const KeepAliveService = require("../../services/KeepAliveService");
 
 class TFCWindow {
   window;
@@ -23,23 +22,6 @@ class TFCWindow {
     //this.wc.openDevTools({ mode: "undocked" });
 
     remoteMain.enable(this.window.webContents);
-    
-    // Keep Alive
-    this.keepalive = new KeepAliveService({
-      getUrl: () => target_url,
-      pollS: 5,
-      failAfterS: 60,
-      onFailHard: (info) => {
-        try {
-
-          this.window.close();
-        } catch {}
-        onFailHard?.(info);
-      },
-      onTick: (tick) => {
-        
-      }
-    });
 
 
     //Apply Zoom
@@ -52,14 +34,6 @@ class TFCWindow {
     this.window.on("closed", () => this.unregisterZoomShortcuts());
     
     this.handleMessages();
-
-    this.window.once("ready-to-show", () => {
-      this.keepalive.start();
-    });
-    this.window.on("closed", () => {
-      this.keepalive.stop();
-    });
-
   }
 
   close() {

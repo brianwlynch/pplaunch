@@ -142,6 +142,9 @@ async function checkServer() {
         if (response.status === 404 || (response.status === 200 && text.includes("404"))){
                 console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 404 Not Found`)
                 return;
+        } else if (response.status === 500){
+                console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 500 Internal Server Error.`)
+                return;
         } else {
             redirect()
         }

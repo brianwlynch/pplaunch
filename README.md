@@ -10,7 +10,8 @@ The panel will open, then every five seconds it will try to connect to the TFC s
 Upon first launch, the TFC Instance will not be set. Open the settings page (with the gear) and set your instance.
 
 ## Other Versions
-- [Android](https://github.com/brianwlynch/pplaunch-android) - Github
+Both are not released yet!
+- [Android](https://github.com/brianwlynch/pplaunch-android)
   - Google Play - *Coming Soon*
 - [iOS (iPAD)](https://github.com/brianwlynch/pplaunch-ios)
   - App Store - *Coming Soon*
