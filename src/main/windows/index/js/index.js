@@ -13,6 +13,8 @@ let clockIcon;
 let startTime;
 let settings;
 
+var checkServerEnabled = true;
+var checkServerEnabledGame = true;
 
 window.addEventListener("DOMContentLoaded", async () => {
     debugIcon = document.getElementById("td_debug");
@@ -22,7 +24,7 @@ window.addEventListener("DOMContentLoaded", async () => {
     title_2 = document.getElementById("title_2");
 
     startTime = new Date();
-    
+
     document.getElementById('settings_icon').addEventListener('click', () => {
         window.appAPI.openSettings();
         if (DEBUG || true) {
@@ -44,60 +46,63 @@ window.addEventListener("DOMContentLoaded", async () => {
 
     settings = await window.settingsAPI.load();
     loadSettings(settings);
-    
+
     setInterval(checkServer, 5000);
 })
 
 function loadSettings(settings) {
-    
+
     if (Object.keys(settings).length === 0) {
         console.warn(`No settings file found.`);
     } else {
         DEBUG = !!settings.DEBUG;
         TFC_INSTANCE = settings.TFC_INSTANCE || '';
-        
-        if(DEBUG || FirstRun){
+
+        if (DEBUG || FirstRun) {
             console.log(settings);
         }
         FirstRun = false;
 
-        if(DEBUG){
+        if (DEBUG) {
             window.appAPI.debugActive();
+            checkServerEnabled = false;
+        } else {
+            checkServerEnabled = true;
         }
 
-        if(debugIcon) debugIcon.style.display = DEBUG ? "table-cell" : "none";
+        if (debugIcon) debugIcon.style.display = DEBUG ? "table-cell" : "none";
 
         REDIRECT_MODE = settings.REDIRECT_MODE || "tfc";
-        if(REDIRECT_MODE !== previousRedirectMode){
+        if (REDIRECT_MODE !== previousRedirectMode) {
             initializeMessages(REDIRECT_MODE);
             previousRedirectMode = REDIRECT_MODE;
         }
 
         CUSTOM_INSTANCE = settings.CUSTOM_INSTANCE || "";
-        
-        if (settings.BASE_URL == "nep"){
+
+        if (settings.BASE_URL == "nep") {
             BASE_URL = ".nepgroup.io"
-        } else if (settings.BASE_URL == "tfc"){
+        } else if (settings.BASE_URL == "tfc") {
             BASE_URL = ".tfclabs.com"
         }
 
         URL_PREFIX = settings.URL_PREFIX || "";
-        
-        if(REDIRECT_MODE === "custom"){
-            if(title) title.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} Is Launching` : "TFC Is Launching";
-            if(title_2) title_2.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} is ready` : "TFC is ready";
+
+        if (REDIRECT_MODE === "custom") {
+            if (title) title.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} Is Launching` : "TFC Is Launching";
+            if (title_2) title_2.innerHTML = settings.LOADING_STRING ? `${settings.LOADING_STRING} is ready` : "TFC is ready";
         } else {
-            if(title) title.innerHTML = "TFC Is Launching";
-            if(title_2) title_2.innerHTML = "TFC is ready";
+            if (title) title.innerHTML = "TFC Is Launching";
+            if (title_2) title_2.innerHTML = "TFC is ready";
         }
     }
 }
 
 async function checkServer() {
     settings = await window.settingsAPI.load();
-    
+
     loadSettings(settings);
-    
+
     if ((!TFC_INSTANCE || TFC_INSTANCE == "none") && REDIRECT_MODE == "tfc") {
         msg = "TFC_INSTANCE not set. Please check your settings!";
         console.warn(msg);
@@ -106,21 +111,21 @@ async function checkServer() {
         loadSettings();
         return;
     } else {
-        alertIcon.style.display = "none";   
+        alertIcon.style.display = "none";
     }
 
     if (!CUSTOM_INSTANCE && REDIRECT_MODE == "custom") {
         msg = "CUSTOM_URL not set. Please check your settings!";
         console.warn(msg);
         alertIcon.addEventListener("click", () => snackBar(msg));
-        alertIcon.style.display = "table-cell";  
+        alertIcon.style.display = "table-cell";
         loadSettings();
         return;
     } else {
-        alertIcon.style.display = "none";   
+        alertIcon.style.display = "none";
     }
-    
-    switch(REDIRECT_MODE) {
+
+    switch (REDIRECT_MODE) {
         case "tfc":
             TARGET_URL = "https://" + URL_PREFIX + "." + TFC_INSTANCE + BASE_URL + "/production/pool/panel";
             break;
@@ -131,62 +136,70 @@ async function checkServer() {
             TARGET_URL = "";
     }
 
-    try {
-        console.info(`Checking TFC at:`, TARGET_URL);
-        const response = await fetch(TARGET_URL, { method: "GET"});
-        const text = await response.text();
-        
-        if (response.status === 404 || (response.status === 200 && text.includes("404"))){
+    if (checkServerEnabled && checkServerEnabledGame) {
+        try {
+            console.info(`Checking TFC at:`, TARGET_URL);
+            const response = await fetch(TARGET_URL, { method: "GET" });
+            const text = await response.text();
+
+            if (response.status === 404 || (response.status === 200 && text.includes("404"))) {
                 console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 404 Not Found`)
                 return;
-        } else if (response.status === 500){
+            } else if (response.status === 500) {
                 console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 500 Internal Server Error.`)
                 return;
-        } else {
-            redirect()
-        }
+            } else {
+                redirect()
+            }
 
-    } catch (e) {
-        console.warn(`Server likely not up yet:`, e.message);
-        clockIcon.addEventListener("click", () => snackBar('Server likely not up yet: <b><i>"' + e.message + '"</i></b><br>Debug mode will tell you more!'));
+        } catch (e) {
+            console.warn(`Server likely not up yet:`, e.message);
+            clockIcon.addEventListener("click", () => snackBar('Server likely not up yet: <b><i>"' + e.message + '"</i></b><br>Debug mode will tell you more!'));
+            checkServerEnabled = true;
+        }
+    } else {
+        console.error(`Not allowed to check the server because you are either in debug mode (${DEBUG}) or in game mode (${!checkServerEnabledGame})`)
     }
 
-    curTime = (Date.now() - startTime)/ 60000;
+    curTime = (Date.now() - startTime) / 60000;
     waitTime = 10 //Minutes
-    if( curTime >= waitTime){
+    if (curTime >= waitTime) {
         clockIcon.style.display = "table-cell";
     } else {
-        clockIcon.style.display = "none";    
+        clockIcon.style.display = "none";
     }
 
 }
 
 let redirected = false;
-function redirect(){
-    if (DEBUG){
+function redirect() {
+    if (DEBUG) {
         console.warn(`Connection to TFC is ok! Won't redirect due to debug mode!`);
         clockIcon.addEventListener("click", () => snackBar('You are in Debug mode!'));
+        checkServerEnabled = false;
         return;
     }
-    
-    if (inGameMode){
+
+    if (inGameMode) {
+        checkServerEnabledGame = false;
         document.getElementById("redirect").classList.add("shown");
         return;
     } else {
-        if (!redirected){
+        if (!redirected) {
             window.appAPI.openTFC(TARGET_URL);
         } else {
             console.warn(`Already redirected!`)
         }
     }
 }
-function redirectGame(){
-    if (DEBUG){
+function redirectGame() {
+    if (DEBUG) {
         console.warn(`Connection to TFC is ok! Won't redirect due to debug mode!`);
         clockIcon.addEventListener("click", () => snackBar('You are in Debug mode!'));
+        checkServerEnabled = false;
         return;
     } else {
-        if (!redirected){
+        if (!redirected) {
             window.appAPI.openTFC(TARGET_URL);
             window.close();
         } else {
@@ -201,5 +214,5 @@ function snackBar(message) {
     barMessage.innerHTML = message;
     bar.className = "show";
 
-    setTimeout(function(){bar.className = bar.className.replace("show", "");}, 10000);
+    setTimeout(function () { bar.className = bar.className.replace("show", ""); }, 10000);
 }
