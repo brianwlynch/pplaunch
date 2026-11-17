@@ -18,8 +18,7 @@ Both are not released yet!
 
 ## Changelog
 
-[v3.3.0](https://github.com/brianwlynch/pplaunch/releases/tag/v3.3.0-beta) - *Beta*
-[v3.2.0](https://github.com/brianwlynch/pplaunch/releases/tag/3.2.0) - *Latest*
+[v3.3.0](https://github.com/brianwlynch/pplaunch/releases/tag/v3.3.0-beta) - *Latest*
 
 [CHANGELOG](CHANGELOG.md)
 
@@ -131,13 +130,3 @@ In the settings menu you can enable debug mode. Debug mode is checked to see if 
 The panel will continue to operate as normally. Use the `console` tab in dev tools to see some logs.
 
 While in debug mode, the panel will attempt to connect to TFC. Once it connects, checks will appear in the top left and the panel will not try to connect to TFC, or automatically redirect you to it. Click the checks to force a redirect.
-
-
-## Star History
-<a href="https://www.star-history.com/?repos=brianwlynch%2Fpplaunch%2Cbrianwlynch%2Fpplaunch-android%2Cbrianwlynch%2Fpplaunch-ios&type=date&legend=top-left">
- <picture>
-   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android%2Cbrianwlynch/pplaunch-ios&type=date&theme=dark&logscale&legend=top-left" />
-   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android%2Cbrianwlynch/pplaunch-ios&type=date&logscale&legend=top-left" />
-   <img alt="Star History Chart" src="https://api.star-history.com/chart?repos=brianwlynch/pplaunch%2Cbrianwlynch/pplaunch-android%2Cbrianwlynch/pplaunch-ios&type=date&logscale&legend=top-left" />
- </picture>
-</a>
