@@ -24,6 +24,8 @@
 - ADD helper to get size of screen
 - ADD a setting to disable goofs
 - ADD build scripts to set panel settings when installing
+- ADD ansible script to deploy folder
+- ADD Highlight to footer
 
 ### v3.2.0 - **Latest**
 - Removed Demo mode
