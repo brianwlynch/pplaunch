@@ -112,61 +112,15 @@
     </div>
     <hr>
 
-    <div class="panelLocation" id="panelLocationDiv" style="margin: 8px;">
-      <table id="table" style="margin: 0 auto;">
-        <tr>
-          <td>
-            <label for="unitName"><b><u>Unit Name:</u></b></label><br>
-            <input type="text" id="unit" placeholder="UNIT" style="width: 148px;
-              height: 48px;
-              text-align: center;
-              padding: 0;
-              margin: 5px;
-              " />
-          </td>
-          <td>
-            <label for="panelLocation"><b><u>Panel Location:</u></b></label><br>
-            <select name="panelLocation" id="panelLocation" style="width: 150px;
-              height: 50px;
-              line-height: 50px;
-              text-align: center;
-              margin: 5px;"">
-              <option value="audio">Audio</option>
-              <option value="engineering">Engineering</option>
-              <option value="flex">Flex Room</option>
-              <option value="production">Production</option>
-              <option value="replay">Replay</option>
-              <option value="submix">Submix</option>
-              <option value="td">TD</option>
-              <option value="video">Video</option>
-              <option value="non">Non-Specific (Tablet)</option>
-              <option value="custom">Custom</option>
-            </select>
-          </td>
-          <td id="customLocationCell" style="display: none;">
-            <label for="customLocation"><b><u>Custom Location:</u></b></label><br>
-            <input type="text" id="customLocation" placeholder="Custom" style="width: 148px;
-              height: 48px;
-              text-align: center;
-              padding: 0;
-              margin: 5px;
-              " />
-          </td>
-        </tr>
-      </table>
-      <label><i>Please be specific! Ex. SS7 / SSCBS-B / ND2-D</i></label><br><br>
-    </div>
-
-    <hr>
     <button onclick="saveSettings()">Save Settings and Close</button>
     <hr>
     
     <button id="clearCookies" onclick="clearCookies()">
       <img src="../assets/images/alert.svg" id="alertIcon"><br>
-      <label for="alertIcon" style="color: black;">DELETE ALL COOKIES</label>
+      <label for="alertIcon" style="color: black;">DELETE ALL COOKIES AND CACHE</label>
     </button>
     <div id="resetHover">
-      All cookies will be deleted and the app will restart.<br> Settings will remain.
+      All cookies and cache will be deleted and the app will restart.<br> Settings will remain.
     </div><br>
   </div>
 

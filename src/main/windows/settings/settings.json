@@ -8,5 +8,7 @@
   "LOADING_STRING": "",
   "UNIT": "",
   "LOCATION": "",
-  "CUSTOM_LOCATION": ""
+  "CUSTOM_LOCATION": "",
+  "GOOFS_ENABLED": true,
+  "LOCAL_SCORES": ""
 }

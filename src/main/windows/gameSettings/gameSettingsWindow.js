@@ -8,8 +8,8 @@ class GameSettingsWindow {
 
   constructor({parent, preload_path}) {
     this.window = new BrowserWindow({
-        width: 470,
-        height: 360,
+        width: 575,
+        height: 540,
         modal: true,
         parent: parent,
         show: false,

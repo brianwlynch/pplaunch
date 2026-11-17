@@ -1,15 +1,18 @@
 const { BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const remoteMain = require("@electron/remote/main");
+const { getWindowSize } = require("../../helpers/WindowSize");
 
 class HelpWindow {
   window;
   wc;
 
   constructor({parent}) {
+    const { width, height, fullscreen } = getWindowSize();
     this.window = new BrowserWindow({
-        width: 720,
-        height: 980,
+        width,
+        height,
+        fullscreen,
         modal: true,
         parent: parent,
         show: false,

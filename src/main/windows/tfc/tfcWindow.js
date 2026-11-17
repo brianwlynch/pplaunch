@@ -1,20 +1,27 @@
 const { BrowserWindow, ipcMain, globalShortcut } = require("electron");
 const path = require("path");
 const remoteMain = require("@electron/remote/main");
+const { getWindowSize } = require("../../helpers/WindowSize");
+
+const ZOOM_STEPS = [0.5, 0.67, 0.75, 0.8, 0.9, 1, 1.1, 1.25, 1.5, 1.75, 2]
 
 class TFCWindow {
   window;
   wc;
 
   constructor(target_url, { onFailHard } = {}) {
+
+    const { width, height, fullscreen } = getWindowSize()
+
     this.window = new BrowserWindow({
-        width: 1920,
-        height: 1080,
-        fullscreen: true,
-        webPreferences:{
-            nodeIntegration: false,
-            contextIsolation: true,
-        },
+      width,
+      height,
+      fullscreen,
+      frame: false,
+      webPreferences: {
+        nodeIntegration: false,
+        contextIsolation: true,
+      },
     });
 
     this.window.loadURL(target_url);
@@ -28,11 +35,11 @@ class TFCWindow {
     this.wc.on("did-finish-load", () => this.applySavedZoom());
     this.wc.on("did-navigate", () => this.applySavedZoom());
     this.wc.on("did-navigate-in-page", () => this.applySavedZoom());
-    
+
     this.window.on("focus", () => this.registerZoomShortcuts());
     this.window.on("blur", () => this.unregisterZoomShortcuts());
     this.window.on("closed", () => this.unregisterZoomShortcuts());
-    
+
     this.handleMessages();
   }
 
@@ -48,51 +55,52 @@ class TFCWindow {
   handleMessages() {
     //Ipc functions go here.
   }
-  
-  getOrigin(){
-    try{
-        const url = new URL(this.wc.getURL());
-        return url.origin;
+
+  getOrigin() {
+    try {
+      const url = new URL(this.wc.getURL());
+      return url.origin;
     } catch {
-        return null;
+      return null;
     }
   }
 
-  async applySavedZoom(){
-    const origin = this.getOrigin()
-    if (!origin) return;
-  }
-
-  registerZoomShortcuts(){
+  registerZoomShortcuts() {
     const wc = this.wc
     if (!wc) return;
 
-    const updateZoom = async (delta) => {
-        const origin = this.getOrigin();
-        if (!origin) return;
-
-        const level = wc.getZoomLevel();
-        const newLevel = level + delta;
-
-        wc.setZoomLevel(newLevel);
-        this.saveZoom(origin, newLevel);
+    const updateZoom = (direction) => {
+      const origin = this.getOrigin();
+      if (!origin) return;
+      const idx = nearestStepIndex(wc.getZoomFactor());
+      const next = ZOOM_STEPS[Math.min(Math.max(idx + direction, 0), ZOOM_STEPS.length -1)];
+      wc.setZoomFactor(next);
+      this.saveZoom(origin, next);
     };
+
+    const nearestStepIndex = (factor) => {
+      let best = 0;
+      ZOOM_STEPS.forEach((f, i) => {
+        if (Math.abs(f - factor) < Math.abs(ZOOM_STEPS[best] - factor)) best = i;
+      });
+      return best;
+    }
 
     if (this._zoomShortcutsRegistered) return;
     this._zoomShortcutsRegistered = true;
 
-    globalShortcut.register("Control+=", () => updateZoom(0.25));
-    globalShortcut.register("Control+-", () => updateZoom(-0.25));
+    globalShortcut.register("Control+=", () => updateZoom(1));
+    globalShortcut.register("Control+-", () => updateZoom(-1));
     globalShortcut.register("Control+0", () => {
-        const origin = this.getOrigin();
-        if(!origin) return;
-        wc.setZoomLevel(0);
-        this.saveZoom(origin, 0);
+      const origin = this.getOrigin();
+      if (!origin) return;
+      wc.setZoomFactor(1);
+      this.saveZoom(origin, 1);
     });
 
   }
 
-  unregisterZoomShortcuts(){
+  unregisterZoomShortcuts() {
     if (!this._zoomShortcutsRegistered) return;
     this._zoomShortcutsRegistered = false;
 
@@ -114,10 +122,11 @@ class TFCWindow {
     }
 
     const levels = s.ZOOM_LEVELS || {};
-    return levels[origin] ?? 0;
+    const v = levels[origin]
+    return ZOOM_STEPS.includes(v) ? v : 1;
   }
 
-  saveZoom(origin, level){
+  saveZoom(origin, level) {
     const SettingsStore = require("../../services/SettingsStore");
     const store = new SettingsStore();
     const s = store.load();
@@ -127,11 +136,11 @@ class TFCWindow {
     store.save(s);
   }
 
-  applySavedZoom(){
+  applySavedZoom() {
     const origin = this.getOrigin();
-    if(!origin) return;
+    if (!origin) return;
     const saved = this.loadZoom(origin);
-    this.wc.setZoomLevel(saved);
+    this.wc.setZoomFactor(saved);
   }
 
 }

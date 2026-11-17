@@ -14,6 +14,8 @@ const registerSettingsIpc = require("./ipc/settingsIPC");
 const LoggingService = require("./services/LoggingService");
 const registerLoggingIpc = require('./ipc/loggingIPC');
 const SettingsStore = require("./services/SettingsStore");
+const registerKeyboardIpc = require('./ipc/keyboardIPC');
+const os = require("os");
 
 const wm = new WindowManager();
 const log = new LoggingService("Main");
@@ -25,6 +27,9 @@ let cachedLocation = initialSettings.LOCATION;
 let cachedCustomLocation = initialSettings.CUSTOM_LOCATION;
 
 require('@electron/remote/main').initialize();
+
+// Used to open on screen keyboard.
+app.commandLine.appendSwitch('force-renderer-accessibility');
 
 // Global main-process error handling
 process.on('uncaughtException', (error) => {
@@ -137,12 +142,13 @@ function createHelpWindow() {
 function createSettingsWindow() {
   logNewWindow("Settings");
   main = wm.get("main");
-  return wm.open("settings", SettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
+  return wm.open("settings", SettingsWindow, { 
+    parent: main?.window, preload_path: path.join(__dirname, "preload", "preload.js") });
 }
 function createGameSettingsWindow() {
   logNewWindow("Game Settings");
   main = wm.get("main");
-  return wm.open("gameSettings", GameSettingsWindow, { parent: main, preload_path: path.join(__dirname, "preload", "preload.js") });
+  return wm.open("gameSettings", GameSettingsWindow, { parent: main?.window, preload_path: path.join(__dirname, "preload", "preload.js") });
 }
 function createTfcWindow(target_url) {
   logNewWindow("TFC");
@@ -234,6 +240,7 @@ app.whenReady().then(() => {
   })
 
   registerLoggingIpc(new LoggingService("IPC"));
+  registerKeyboardIpc(new LoggingService("Keyboard"));
 
   createMainWindow();
 
@@ -263,8 +270,21 @@ app.whenReady().then(() => {
     main?.window?.webContents?.closeDevTools();
   });
 
-});
+  // Send version to main window
+  ipcMain.handle("app:version", () => app.getVersion());
+  ipcMain.handle("app:ip-addresses", () => {
+    var networkInterfaces = os.networkInterfaces();
+    const addresses = [];
 
-// Doesn't work when running `npm run start` from network share; an electron limitation.
-// app.commandLine.appendSwitch('disable-gpu');
-// app.commandLine.appendSwitch('disable-gpu-sandbox');
+    for (const name in networkInterfaces) {
+      if (/^vEthernet/i.test(name)) continue;
+
+      networkInterfaces[name]
+        .filter((iface) => (iface.family === "IPv4" || iface.family === 4) && !iface.internal)
+        .forEach((iface) => addresses.push(iface.address));
+    }
+
+    return addresses;
+  })
+
+});

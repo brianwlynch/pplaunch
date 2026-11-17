@@ -23,6 +23,9 @@
             <img id="debug_icon" onclick="snackBar('You are in debug mode!')" src="../assets/images/debug.svg"
                 class="debug_icon" />
         </td>
+        <td id="td_checks" style="display: none;">
+            <img id="checks_icon" onclick="redirect(true)" src="../assets/images/checks.svg" class="checks_icon" />
+        </td>
         <td id="td_clock" style="display: none;">
             <img id="clock_icon" src="../assets/images/clock-question.svg" class="clock_icon" />
         </td>
@@ -61,7 +64,7 @@
         <div id="title" class="title">TFC Is Launching</div>
         <div id="message" class="subtitle">This page will automatically refresh when ready.</div>
     </div>
-    <img id="rocket-img" class="rocket" src="../assets/images/rocket.gif" onclick="launchGame()"></img>
+    <img id="rocket-img" class="rocket" src="../assets/images/rocket.gif" onclick="checkGoofs()"></img>
 
     <div id="redirect" class="redirect" onclick="redirectGame()">
         <h1 id="title_2" class="title_2">TFC is ready</h1>
@@ -154,7 +157,7 @@
         <img src="../assets/images/volume-off.svg" onclick="toggleSFXMute()" id="sfxIcon" class="sound-controls" />
         <img src="../assets/images/music-off.svg" onclick="toggleMusicMute()" id="musicIcon" class="sound-controls" />
         <img src="../assets/images/settings.svg" id="gameSettingsIcon" class="sound-controls" />
-        <p id="footer">PPLaunch v3.3.0-dev &nbsp; | &nbsp; June 9, 2026 &nbsp; | &nbsp; 6:35:03 PM</p>
+        <p id="footer"></p>
     </div>
 </body>
 

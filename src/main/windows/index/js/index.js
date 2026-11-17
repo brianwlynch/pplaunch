@@ -5,21 +5,26 @@ var BASE_URL = null;
 var CUSTOM_INSTANCE = null;
 var REDIRECT_MODE = null;
 let previousRedirectMode = null; // To avoid constantly updating the messages array
+let GOOFS_ENABLED = true; // Enables space invaders and pickle rick possibilities.
 
 var FirstRun = true;
 let debugIcon;
 let alertIcon;
 let clockIcon;
+let checksIcon;
 let startTime;
 let settings;
 
+// Will try to access server then if debug this will turn false
 var checkServerEnabled = true;
+// Will try to access server then redirect dialog will open and this will turn false
 var checkServerEnabledGame = true;
 
 window.addEventListener("DOMContentLoaded", async () => {
     debugIcon = document.getElementById("td_debug");
     alertIcon = document.getElementById("td_alert");
     clockIcon = document.getElementById("td_clock");
+    checksIcon = document.getElementById("td_checks");
     title = document.getElementById("title");
     title_2 = document.getElementById("title_2");
 
@@ -65,9 +70,11 @@ function loadSettings(settings) {
 
         if (DEBUG) {
             window.appAPI.debugActive();
-            checkServerEnabled = false;
         } else {
-            checkServerEnabled = true;
+            // Sever is already accessible, redirect.
+            if (!checkServerEnabled) {
+                redirect();
+            }
         }
 
         if (debugIcon) debugIcon.style.display = DEBUG ? "table-cell" : "none";
@@ -94,6 +101,11 @@ function loadSettings(settings) {
         } else {
             if (title) title.innerHTML = "TFC Is Launching";
             if (title_2) title_2.innerHTML = "TFC is ready";
+        }
+
+        GOOFS_ENABLED = !!settings.GOOFS_ENABLED;
+        if (GOOFS_ENABLED) {
+            doShenanigans()
         }
     }
 }
@@ -142,8 +154,8 @@ async function checkServer() {
             const response = await fetch(TARGET_URL, { method: "GET" });
             const text = await response.text();
 
-            if (response.status === 404 || (response.status === 200 && text.includes("404"))) {
-                console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 404 Not Found`)
+            if (response.status === 404 || (response.status === 200 && text.includes("404 page not found"))) {
+                console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 404 Not Found or 200 with "404 Not Found"`)
                 return;
             } else if (response.status === 500) {
                 console.error(`[Index] ${new Date().toISOString()} - Failed to fetch! - 500 Internal Server Error.`)
@@ -158,7 +170,12 @@ async function checkServer() {
             checkServerEnabled = true;
         }
     } else {
-        console.error(`Not allowed to check the server because you are either in debug mode (${DEBUG}) or in game mode (${!checkServerEnabledGame})`)
+        if (!checkServerEnabled) {
+            console.warn(`Connection to TFC is ok! Won't attempt to reach TFC again due to debug mode!`)
+        } else if (!checkServerEnabledGame) {
+            // Only shows up once the TFC was accessible, the "Tap to redirect" dialog should be shown top left.
+            console.warn(`Connection to TFC is ok! Won't redirect due to game mode! CLICK DIALOG to redirect!`);
+        }
     }
 
     curTime = (Date.now() - startTime) / 60000;
@@ -172,11 +189,12 @@ async function checkServer() {
 }
 
 let redirected = false;
-function redirect() {
-    if (DEBUG) {
-        console.warn(`Connection to TFC is ok! Won't redirect due to debug mode!`);
+function redirect(bypass = false) {
+    if (DEBUG & !bypass) {
+        console.warn(`##### Connection to TFC is ok! Won't redirect due to debug mode! #####`);
         clockIcon.addEventListener("click", () => snackBar('You are in Debug mode!'));
         checkServerEnabled = false;
+        if (checksIcon) checksIcon.style.display = "table-cell";
         return;
     }
 
@@ -215,4 +233,38 @@ function snackBar(message) {
     bar.className = "show";
 
     setTimeout(function () { bar.className = bar.className.replace("show", ""); }, 10000);
+}
+
+async function updateFooter() {
+    const version = await window.appAPI.getVersion();
+    const ips = await window.appAPI.getIPAddresses();
+    document.getElementById("footer").textContent =
+        "v" + version + "\u00A0\u00A0|\u00A0\u00A0" + ips.join("\u00A0\u00A0|\u00A0\u00A0");
+}
+
+updateFooter();
+
+function checkGoofs() {
+    if (GOOFS_ENABLED) {
+        launchGame()
+    } else {
+        console.warn("Sorry! Goofs aren't enabled!")
+    }
+}
+
+// Changes the rocket picture
+function doShenanigans() {
+
+    const rocket = document.getElementById("rocket-img");
+    easterEgg = Math.random()
+
+    if (.03 <= easterEgg && easterEgg <= .04) {
+        rocket.src = "../assets/images/truck_1.png";
+        rocket.style.height = "calc(var(--rocket-size) * 1.75)";
+        rocket.style.mixBlendMode = "normal";
+    }
+    else if (easterEgg <= .02) {
+        rocket.src = "../assets/images/picklerick.gif";
+        rocket.style.height = "calc(var(--rocket-size) * 1.25)";
+    }
 }

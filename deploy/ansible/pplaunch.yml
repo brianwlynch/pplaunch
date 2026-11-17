@@ -1,0 +1,37 @@
+- hosts: all
+  become: true
+  vars:
+    deb_name: "TFC-Public-Panel-Launcher-v{{ pplaunch_version }}-UBUNTU.deb"
+    deb_url: "https://github.com/brianwlynch/pplaunch/releases/download/v{{ pplaunch_version }}/{{ deb_name }}"
+  tasks:
+    - name: Preseed debconf answers
+      ansible.builtin.debconf:
+        name: pplaunch
+        question: "pplaunch/{{ item.q }}"
+        vtype: "{{ item.t }}"
+        value: "{{ item.v }}"
+      loop:
+        - { q: redirect_mode,  t: select,  v: "{{ pplaunch_redirect_mode }}" }
+        - { q: url_prefix,     t: select,  v: "{{ pplaunch_url_prefix | default('control') }}" }
+        - { q: tfc_instance,   t: string,  v: "{{ pplaunch_tfc_instance | default('') }}" }
+        - { q: base_url,       t: select,  v: "{{ pplaunch_base_url | default('nep') }}" }
+        ## "custom_url" + "loading_string" not required if "redirect_mode" is "tfc"
+        - { q: custom_url,     t: string,  v: "{{ pplaunch_custom_url | default('') }}" }
+        - { q: loading_string, t: string,  v: "{{ pplaunch_loading_string | default('') }}" }
+        - { q: goofs_enabled,  t: boolean, v: "{{ pplaunch_goofs | bool | upper }}" }
+        - { q: configure_game, t: boolean, v: "{{ pplaunch_configure_game | bool | lower }}" }
+        ## The three below are not required if "configure_game" is false
+       - { q: unit,           t: string,  v: "{{ pplaunch_unit | default('') }}" }
+       - { q: location,       t: string,  v: "{{ pplaunch_location | default('audio') }}" }
+       - { q: custom_location, t: string, v: "{{ pplaunch_custom_location | default('') }}" }
+      register: preseed
+
+    - name: Install / upgrade the launcher
+      ansible.builtin.apt:
+        deb: "{{ deb_url }}"
+      environment: { DEBIAN_FRONTEND: noninteractive }
+      register: install
+    
+    - name: Re-apply settings when only the values changed (same version already installed)
+      ansible.builtin.command: dpkg-reconfigure -f noninteractive pplaunch
+      when: preseed.changed and not install.changed

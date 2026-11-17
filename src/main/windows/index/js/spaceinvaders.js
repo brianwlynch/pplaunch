@@ -119,6 +119,7 @@ Game.prototype.start = function () {
 
     // Shift TFC launch screen to top of page and hide rocket image
     document.getElementById('main-container').classList.add('in-game');
+    document.body.classList.add('game-active');
     document.getElementById('rocket-img').hidden = true;
 
     //  Set the game variables.
@@ -292,15 +293,26 @@ GameOverState.prototype.draw = function (game, dt, ctx) {
     //  Clear the background.
     ctx.clearRect(0, 0, game.width, game.height);
 
-    if (!scoresSent) {
-        try {
-            window.loggingAPI.info("Sent Scores!", "SpaceInvaders");
-            sendScores(game);
-            scoresSent = true;
-        } catch (e) {
-            window.loggingAPI.warn(`Couldn't update UI - ${e}`, "SpaceInvaders");
-        }
-    }
+    // TODO: Handle scores better
+    // if (!scoresSent) {
+    //     try {
+    //         window.loggingAPI.info("Sent Scores!", "SpaceInvaders");
+    //         sendScores(game);
+    //         scoresSent = true;
+    //     } catch (e) {
+    //         window.loggingAPI.warn(`Couldn't update UI - ${e}`, "SpaceInvaders");
+    //     }
+    // }
+
+    ctx.font = "30px RobotoThin";
+    ctx.fillStyle = '#ffffff';
+    ctx.textBaseline = "middle";
+    ctx.textAlign = "center";
+    ctx.fillText("Game Over!", game.width / 2, game.height / 2 - 40);
+    ctx.font = "16px RobotoThin";
+    ctx.fillText("You scored " + game.score + " and got to level " + game.level, game.width / 2, game.height / 2);
+    ctx.fillText("Touch the screen to play again.", game.width / 2, game.height / 2 + 30);
+
 };
 
 GameOverState.prototype.keyDown = function (game, keyCode) {
@@ -765,7 +777,7 @@ function LevelIntroState(level) {
     this.level = level;
     this.countdownMessage = "3";
 
-    document.getElementById("gamecontainer").style.display = "block";
+    document.getElementById("gamecontainer").style.display = "";
     document.getElementById("scores-container").style.display = "none";
     scoresSent = false;
 

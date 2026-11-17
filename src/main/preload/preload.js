@@ -33,6 +33,8 @@ contextBridge.exposeInMainWorld('appAPI', {
     openGameSettings: () => ipcRenderer.send("open-game-settings-window"),
     openTFC: (url) => ipcRenderer.send("open-tfc-window", url),
     debugActive: () => ipcRenderer.send("debug-active"),
+    getVersion: () => ipcRenderer.invoke("app:version"),
+    getIPAddresses: () => ipcRenderer.invoke("app:ip-addresses"),
 });
 
 contextBridge.exposeInMainWorld("sharingAPI", {
@@ -49,6 +51,11 @@ contextBridge.exposeInMainWorld("loggingAPI", {
     error: (msg, service) => ipcRenderer.send("logging:error", msg, service),
     warn: (msg, service) => ipcRenderer.send("logging:warn", msg, service),
     info: (msg, service) => ipcRenderer.send("logging:info", msg, service),
+})
+
+contextBridge.exposeInMainWorld("keyboardAPI", {
+    open: () => ipcRenderer.send("keyboard:open"),
+    hide: () => ipcRenderer.send("keyboard:hide"),
 })
 
 let bridge = {

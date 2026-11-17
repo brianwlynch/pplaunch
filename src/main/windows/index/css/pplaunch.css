@@ -122,6 +122,11 @@ body {
     padding: 5px;
 }
 
+.checks_icon {
+    filter: invert(1);
+    padding: 5px;
+}
+
 .redirect {
     padding: 5px 0;
     height: 125px;
@@ -130,6 +135,8 @@ body {
     border-radius: 10px;
     margin-left: 10px;
     position: absolute;
+    top: 4vh;
+    left: 0;
     z-index: 1000;
     transform: scale(0);
     transition: 1s;
@@ -149,7 +156,8 @@ body {
 
 .rocket {
     position: absolute;
-    height: 150px;
+    --rocket-size: 150px;
+    height: var(--rocket-size);
     width: inherit;
     left: 20vw;
     top: 70vh;
@@ -157,6 +165,92 @@ body {
     animation: 60s linear infinite rocket-orbit, 169s linear infinite rocket-wobble, 4s ease-in fadein;
     cursor: pointer;
 }
+
+/* Small screen display settings */
+@media (min-aspect-ratio: 3/1),
+(max-height: 400px) {
+    .rocket {
+        --rocket-size: 65vh;
+        top: auto;
+        bottom: 5vh;
+        left: 0;
+        animation: 40s linear infinite rocket-flyby,
+            6s ease-in-out infinite alternate rocket-bob,
+            12s ease-in-out infinite rocket-tilt,
+            4s ease-in fadein;
+    }
+
+    body.game-active #main-container {
+        animation: 3s ease-in-out forwards slide-right;
+    }
+
+    /* Game left */
+    body.game-active #gamecontainer,
+    body.game-active #scores-container {
+        position: fixed;
+        left: -5vw;
+        top: 0;
+        width: 70vw;
+        height: 105vh !important;
+        margin: 0;
+        align-items: center;
+        justify-content: center;
+        animation: 3s ease-in-out forwards fadein;
+    }
+
+    body.game-active #gamecontainer {
+        display: flex;
+    }
+
+    body.game-active #gameCanvas {
+        height: 90vh;
+        width: auto;
+        max-width: 63vw;
+    }
+}
+
+@keyframes rocket-flyby {
+    from {
+        translate: 100vw 0;
+    }
+
+    to {
+        translate: -100% 0;
+    }
+}
+
+@keyframes rocket-bob {
+    from {
+        bottom: -40vh;
+    }
+
+    to {
+        bottom: calc(100vh - var(--rocket-size) + 25vh);
+    }
+}
+
+@keyframes rocket-tilt {
+    0% {
+        rotate: -90deg;
+    }
+
+    25% {
+        rotate: -60deg;
+    }
+
+    50% {
+        rotate: -90deg;
+    }
+
+    75% {
+        rotate: -125deg;
+    }
+
+    100% {
+        rotate: -90deg;
+    }
+}
+
 
 @keyframes shift-container {
     from {
@@ -221,6 +315,16 @@ body {
 
     to {
         opacity: 0
+    }
+}
+
+@keyframes slide-right {
+    from {
+        translate: 0 0;
+    }
+
+    to {
+        translate: 22.5vw 0;
     }
 }
 

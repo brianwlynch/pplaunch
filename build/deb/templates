@@ -1,0 +1,60 @@
+Template: pplaunch/url_prefix
+Type: select
+Choices-C: control, next
+Choices: CONTROL, NEXT
+Default: control
+Description: TFC URL prefix
+ The panel loads https://[prefix].[instance].[base]
+
+Template: pplaunch/redirect_mode
+Type: select
+Choices-C: tfc, custom
+Choices: TFC instance, Custom URL
+Default: tfc
+Description: How should this panel connect?
+
+Template: pplaunch/custom_url
+Type: string
+Description: Custom URL
+ Full address, including https://
+
+Template: pplaunch/loading_string
+Type: string
+Description: Loading prefix
+ Shown as "<prefix> Is Launching" while the page loads.
+
+Template: pplaunch/tfc_instance
+Type: string
+Description: TFC instance name
+ The middle part of the TFC URL.
+
+Template: pplaunch/base_url
+Type: select
+Choices-C: nep, tfc
+Choices: .nepgroup.io, .tfclabs.com
+Default: nep
+Description: TFC base URL
+
+Template: pplaunch/goofs_enabled
+Type: boolean
+Default: true
+Description: Enable goofs (Space Invaders and picture changes)?
+
+Template: pplaunch/configure_game
+Type: boolean
+Default: false
+Description: Configure game settings now?
+
+Template: pplaunch/unit
+Type: string
+Description: Unit (specific trailer)
+
+Template: pplaunch/location
+Type: select
+Choices-C: audio, engineering, flex, production, replay, submix, td, video, non, custom
+Choices: Audio, Engineering, Flex, Production, Replay, Submix, TD, Video, Non-Specific Location (tablet/iPad), Custom
+Description: Panel location
+
+Template: pplaunch/custom_location
+Type: string
+Description: Custom location name

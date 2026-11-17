@@ -49,23 +49,6 @@ function slowLoad() {
     }, TRANSITION_DURATION);
 }
 
-function doShennanigans() {
-
-    const rocket = document.getElementById("rocket-img");
-    easterEgg = Math.random()
-
-    if (.03 <= easterEgg && easterEgg <= .04) {
-        rocket.src = "../assets/images/truck_1.png";
-        rocket.style.height = "200px";
-        rocket.style.mixBlendMode = "normal";
-    }
-    else if (easterEgg <= .02) {
-        rocket.src = "../assets/images/picklerick.gif";
-    }
-}
-
-doShennanigans();
-
 setTimeout(() => {
     slowLoad();
 }, SLOW_LOAD_MS);

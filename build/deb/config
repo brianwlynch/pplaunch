@@ -1,0 +1,33 @@
+#!/bin/sh
+set -e
+. /usr/share/debconf/confmodule
+
+P=pplaunch
+
+db_input high $P/redirect_mode || true
+db_go || true
+db_get $P/redirect_mode
+if [ "$RET" = "custom" ]; then
+    db_input high $P/custom_url || true
+    db_input high $P/loading_string || true
+else
+    db_input high $P/url_prefix || true
+    db_input high $P/tfc_instance || true
+    db_input high $P/base_url || true
+fi
+db_input high $P/goofs_enabled || true
+db_go || true
+
+db_input high $P/configure_game || true
+db_go || true
+db_get $P/configure_game
+if [ "$RET" = "true" ]; then
+    db_input high $P/unit     || true
+    db_input high $P/location || true
+    db_go || true
+    db_get $P/location
+    if [ "$RET" = "custom" ]; then
+        db_input high $P/custom_location || true
+        db_go || true
+    fi
+fi

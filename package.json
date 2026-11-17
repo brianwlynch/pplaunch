@@ -5,9 +5,10 @@
   "description": "Loading screen for TFC Touchscreens",
   "main": "src/main/main.js",
   "scripts": {
-    "start": "node update-footer-dev.js && electron-forge start",
-    "build": "node update-footer.js && electron-builder",
-    "dev": "node update-footer-dev.js && node build-dev.js"
+    "start": "electron-forge start",
+    "start-densitron": "electron-forge start -- --screen-size=1920x285",
+    "build": "electron-builder",
+    "dev": "node build-dev.js"
   },
   "keywords": [],
   "author": "NEP Group, Brian Lynch",
@@ -51,7 +52,8 @@
       "uninstallerIcon": "src/main/windows/assets/images/icon.ico",
       "uninstallDisplayName": "TFC Public Panel Launcher",
       "license": "license.md",
-      "allowToChangeInstallationDirectory": false
+      "allowToChangeInstallationDirectory": false,
+      "include": "build/installer.nsh"
     },
     "linux": {
       "target": [
@@ -62,6 +64,26 @@
       "maintainer": "NEP Group, Brian Lynch",
       "description": "Loading screen for TFC Touchscreens",
       "synopsis": "TFC Public Panel Launcher"
+    },
+    "deb": {
+      "afterInstall": "build/deb/after-install.sh",
+      "afterRemove": "build/deb/after-remove.sh",
+      "fpm": [
+        "--deb-config=build/deb/config",
+        "--deb-templates=build/deb/templates"
+      ],
+      "depends": [
+        "libgtk-3-0",
+        "libnotify4",
+        "libnss3",
+        "libxss1",
+        "libxtst6",
+        "xdg-utils",
+        "libatspi2.0-0",
+        "libuuid1",
+        "libsecret-1-0",
+        "libasound2t64 | libasound2"
+      ]
     }
   }
 }

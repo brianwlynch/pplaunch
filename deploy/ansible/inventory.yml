@@ -1,0 +1,28 @@
+all:
+  vars:
+    pplaunch_version: "3.3.0"
+    ### tfc | custom
+    pplaunch_redirect_mode: tfc
+    ### control | next
+    pplaunch_url_prefix: control
+    pplaunch_tfc_instance: "mytfc"     
+    ### nep (.nepgroup.io) | tfc (.tfclabs.com)
+    pplaunch_base_url: nep
+    ### "https://" is required!!
+    # pplaunch_custom_url: "https://example.com"
+    ### enables space invaders and rocket picture changes
+    pplaunch_goofs: true
+    ### Configuring game settings are optional!
+    pplaunch_configure_game: false
+  hosts:
+    panel-submix:
+      ansible_host: 10.0.61.11
+      pplaunch_configure_game: true
+      ### Specific Trailer / Room
+      pplaunch_unit: "ND2D"
+      ### audio | engineering | flex | production | replay | submix | td | video | non | custom
+      pplaunch_location: audio
+      # pplaunch_custom_location: "EIC Laptop"
+    panel-replay:
+      ansible_host: 10.0.61.12
+      pplaunch_goofs: false

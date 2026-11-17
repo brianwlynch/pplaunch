@@ -8,12 +8,22 @@
   - Windows - `%appdata%\TFC Public Panel Launcher\app.log`
   - Linux - `~/.config/TFC Public Panel Launcher/app.log`
 - Added a leaderboard to SpaceInvaders
-- Added a dev script to build app with timestamp and add "-dev" to footer of index.html.
 - Added option in settings window to clear cookies.
-- Fixed AutoUpdater DOM bug.
 - Added a HTTP 500 response check. Won't redirect
 - Fixed scores returning after resetting the leaderboard.
 - Renamed "main" window folder to "index".
+- CHANGE location of panel location from main settings to game settings
+- CHANGE how many times the server will be checked.
+- CHANGE footer to auto pull from package info
+- CHANGE how zoom is handled in TFCWindow
+- CHANGE rocket animation for smaller screens
+- CHANGE layout for space invaders for smaller screens
+- CHANGE to a new dedicated css for Help page
+- DISABLED scores, need to figure out better way to handle.
+- ADD device ip to bottom of screen
+- ADD helper to get size of screen
+- ADD a setting to disable goofs
+- ADD build scripts to set panel settings when installing
 
 ### v3.2.0 - **Latest**
 - Removed Demo mode

@@ -8,8 +8,9 @@ function launchGame() {
 
     //  Setup the canvas.
     var canvas = document.getElementById("gameCanvas");
-    canvas.width = 1200;
-    canvas.height = 800;
+    var small = window.matchMedia('(min-aspect-ratio: 3/1), (max-height: 400px)').matches;
+    canvas.width = small ? 560 : 1200;
+    canvas.height = small ? 420 : 800;
 
     //  Create the game.
     game = new Game();

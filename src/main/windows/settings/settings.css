@@ -1,16 +1,27 @@
-html, body {
-display: flex;
-height: 100vh;
-align-items: center;
-justify-content: center;
-font-family: sans-serif;
-background: rgb(200, 200, 200)
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body{
+    margin: 0;
+    height: 100%;
+}
+
+body {
+    display: flex;
+    justify-content: center;
+    overflow-y: auto;
+    font-family: sans-serif;
+    background: rgb(200, 200, 200);
 }
 
 .container {
-background: rgba(0,0,0,0);
-padding: 2rem;
-text-align: center;
+    margin: auto;
+    width: 100%;
+    max-width: 600px;
+    padding: clamp(1rem, 4vw, 2rem);
+    background: rgba(0, 0, 0, 0);
+    text-align: center;
 }
 
 h2 {

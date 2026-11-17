@@ -38,22 +38,6 @@ async function loadSettings() {
     console.log("LOADING:", settings.LOADING_STRING)
     document.getElementById('loadingString').value = settings.LOADING_STRING || '';
 
-    //PANEL LOCATION
-    console.log("UNIT NAME:", settings.UNIT)
-    document.getElementById('unit').value = settings.UNIT || '';
-
-    console.log("LOCATION:", settings.LOCATION)
-    document.getElementById('panelLocation').value = settings.LOCATION || '';
-
-    console.log("CUSTOM LOCATION:", settings.CUSTOM_LOCATION)
-    document.getElementById('customLocation').value = settings.CUSTOM_LOCATION || '';
-
-    const locationConfig = customLocationCellConfig[settings.LOCATION];
-    if (locationConfig) {
-        locationConfig.show.forEach(id => document.getElementById(id).style.display = "block");
-        locationConfig.hide.forEach(id => document.getElementById(id).style.display = "none");
-    }
-
 };
 
 async function saveSettings() {
@@ -67,10 +51,7 @@ async function saveSettings() {
         REDIRECT_MODE: document.getElementById('redirectMode').value,
         URL_PREFIX: document.getElementById('urlPrefix').value,
         BASE_URL: document.getElementById('baseURLDropdown').value,
-        LOADING_STRING: document.getElementById('loadingString').value,
-        UNIT: document.getElementById('unit').value,
-        LOCATION: document.getElementById('panelLocation').value,
-        CUSTOM_LOCATION: document.getElementById('customLocation').value
+        LOADING_STRING: document.getElementById('loadingString').value
     });
     window.settingsAPI.onChanged();
 
@@ -93,48 +74,6 @@ const optionsConfig = {
         hide: ["tfcInstanceTable"]
     },
 }
-const customLocationCellConfig = {
-    "audio": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "engineering": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "flex": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "production": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "replay": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "submix": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "td": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "video": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "non": {
-        show: [],
-        hide: ["customLocationCell"]
-    },
-    "custom": {
-        show: ["customLocationCell"],
-        hide: []
-    }
-};
 
 select.addEventListener("change", () => {
     const config = optionsConfig[select.value];
@@ -143,17 +82,6 @@ select.addEventListener("change", () => {
     config.hide.forEach(id => document.getElementById(id).style.display = "none");
 
 });
-
-const panelLocationSelect = document.getElementById("panelLocation");
-
-panelLocationSelect.addEventListener("change", () => {
-    const locationConfig = customLocationCellConfig[panelLocationSelect.value];
-    if (locationConfig) {
-        locationConfig.show.forEach(id => document.getElementById(id).style.display = "block");
-        locationConfig.hide.forEach(id => document.getElementById(id).style.display = "none");
-    }
-});
-
 
 async function clearCookies(){
     console.log("Button Pressed!");

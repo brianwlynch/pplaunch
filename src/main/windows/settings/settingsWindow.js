@@ -1,15 +1,19 @@
 const { BrowserWindow, ipcMain } = require("electron");
 const path = require("path");
 const remoteMain = require("@electron/remote/main");
+const { getWindowSize } = require("../../helpers/WindowSize");
 
 class SettingsWindow {
   window;
   wc;
 
   constructor({parent, preload_path}) {
+    const { width, height, fullscreen } = getWindowSize()
+
     this.window = new BrowserWindow({
-        width: 675,
-        height: 750,
+        width,
+        height,
+        fullscreen,
         modal: true,
         parent: parent,
         show: false,
